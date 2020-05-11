@@ -1,7 +1,10 @@
 package com.rec.timerv01.activity;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.work.Data;
+import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 import androidx.work.OneTimeWorkRequest;
 
@@ -10,6 +13,7 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -41,11 +45,14 @@ public class EditForm extends AppCompatActivity {
     private Runnable runnable;
     private Handler handler = new Handler();
 
-    Calendar actual = Calendar.getInstance();
+    Calendar actualf = Calendar.getInstance();
     Calendar calendarf = Calendar.getInstance();
+    
+    Calendar actuali = Calendar.getInstance();
     Calendar calendari = Calendar.getInstance();
 
-    private int minutos,hora,dia,mes,ano;
+    private int minutosi,horai,diai,mesi,anoi;
+    private int minutosf,horaf,diaf,mesf,anof;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,24 +76,24 @@ public class EditForm extends AppCompatActivity {
         btnDataf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ano = actual.get(calendarf.YEAR);
-                mes = actual.get(calendarf.MONTH);
-                dia = actual.get(calendarf.DAY_OF_MONTH);
+                anof = actualf.get(Calendar.YEAR);
+                mesf = actualf.get(Calendar.MONTH);
+                diaf = actualf.get(Calendar.DAY_OF_MONTH);
 
 
                 DatePickerDialog datepickerdialog = new DatePickerDialog(v.getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int y, int m, int d) {
-                        calendarf.set(calendarf.DAY_OF_MONTH,d);
-                        calendarf.set(calendarf.MONTH,m);
-                        calendarf.set(calendarf.YEAR,y);
+                        calendarf.set(Calendar.DAY_OF_MONTH,d);
+                        calendarf.set(Calendar.MONTH,m);
+                        calendarf.set(Calendar.YEAR,y);
 
                         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
                         String strDate = format.format(calendarf.getTime());
                         btnDataf.setText(strDate);
 
                     }
-                },ano,mes,dia);
+                },anof,mesf,diaf);
                 datepickerdialog.show();
             }
         });
@@ -95,19 +102,19 @@ public class EditForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                hora = actual.get(calendarf.HOUR_OF_DAY);
-                minutos = actual.get(calendarf.MINUTE);
+                horaf = actualf.get(Calendar.HOUR_OF_DAY);
+                minutosf = actualf.get(Calendar.MINUTE);
 
                 TimePickerDialog timepickerdialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int h, int m) {
-                        calendarf.set(calendarf.HOUR_OF_DAY,h);
-                        calendarf.set(calendarf.MINUTE,m);
+                        calendarf.set(Calendar.HOUR_OF_DAY,h);
+                        calendarf.set(Calendar.MINUTE,m);
 
                         btnTimef.setText(String.format("%02d:%02d", h, m));
 
                     }
-                }, hora,minutos,true);
+                }, horaf,minutosf,true);
                 timepickerdialog.show();
             }
         });
@@ -116,24 +123,24 @@ public class EditForm extends AppCompatActivity {
         btnDatai.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ano = actual.get(calendari.YEAR);
-                mes = actual.get(calendari.MONTH);
-                dia = actual.get(calendari.DAY_OF_MONTH);
+                anoi = actuali.get(Calendar.YEAR);
+                mesi = actuali.get(Calendar.MONTH);
+                diai = actuali.get(Calendar.DAY_OF_MONTH);
 
 
                 DatePickerDialog datepickerdialog = new DatePickerDialog(v.getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int y, int m, int d) {
-                        calendari.set(calendari.DAY_OF_MONTH,d);
-                        calendari.set(calendari.MONTH,m);
-                        calendari.set(calendari.YEAR,y);
+                        calendari.set(Calendar.DAY_OF_MONTH,d);
+                        calendari.set(Calendar.MONTH,m);
+                        calendari.set(Calendar.YEAR,y);
 
                         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
                         String strDate = format.format(calendari.getTime());
                         btnDatai.setText(strDate);
 
                     }
-                },ano,mes,dia);
+                },anoi,mesi,diai);
                 datepickerdialog.show();
             }
         });
@@ -142,19 +149,19 @@ public class EditForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                hora = actual.get(calendari.HOUR_OF_DAY);
-                minutos = actual.get(calendari.MINUTE);
+                horai = actuali.get(Calendar.HOUR_OF_DAY);
+                minutosi = actuali.get(Calendar.MINUTE);
 
                 TimePickerDialog timepickerdialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int h, int m) {
-                        calendari.set(calendari.HOUR_OF_DAY,h);
-                        calendari.set(calendari.MINUTE,m);
+                        calendari.set(Calendar.HOUR_OF_DAY,h);
+                        calendari.set(Calendar.MINUTE,m);
 
                         btnTimei.setText(String.format("%02d:%02d", h, m));
 
                     }
-                }, hora,minutos,true);
+                }, horai,minutosi,true);
                 timepickerdialog.show();
             }
         });
@@ -186,7 +193,14 @@ public class EditForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String tag = "tag1";
-                Long AlertTime = calendari.getTimeInMillis() - System.currentTimeMillis();
+                Long ddf = calendarf.getTimeInMillis();
+                Long dda = System.currentTimeMillis();
+                Long AlertTime = (calendarf.getTimeInMillis() - System.currentTimeMillis())/1000/60;
+
+                Log.d("TAGNAME", "ddf "+String.valueOf(ddf));
+                Log.d("TAGNAME", "dda "+String.valueOf(dda));
+                Log.d("TAGNAME", "AlertTime "+String.valueOf(AlertTime));
+
                 //int random = (int)(Math.random() * 50 * 1); // *** Otro Tag
 
                 Data data = new Data.Builder()
@@ -195,16 +209,40 @@ public class EditForm extends AppCompatActivity {
                         .putInt("id_noti", 1)
                         .build();
                 /*============================================================*/
-                OneTimeWorkRequest noti = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
-                        .setInitialDelay(AlertTime, TimeUnit.MILLISECONDS).addTag(tag)
+//                OneTimeWorkRequest noti = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
+//                        .setInitialDelay(AlertTime, TimeUnit.MILLISECONDS).addTag(tag)
+//                        //.setInputData(data)
+//                        .build();
+
+//                WorkManager instance = WorkManager.getInstance(getApplicationContext());
+//                instance.enqueue(workRequest);
+
+                final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
                         //.setInputData(data)
+                        .setInitialDelay(AlertTime, TimeUnit.MINUTES)
+                        .addTag(tag)
                         .build();
 
-                WorkManager instance = WorkManager.getInstance(getApplicationContext());
-                instance.enqueue(noti);
+                WorkManager.getInstance(getApplicationContext()).enqueue(workRequest);
                 /*============================================================*/
 
                 Toast.makeText(EditForm.this, "Alarma Guardada", Toast.LENGTH_SHORT).show();
+
+
+                WorkManager.getInstance(EditForm.this).getWorkInfoByIdLiveData(workRequest.getId()).observe(EditForm.this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(@Nullable WorkInfo workInfo) {
+                        if(workInfo  != null ){
+                            if(workInfo.getState().isFinished()){
+                                Data data = workInfo.getOutputData();
+                                String outputdata = data.getString(WorkManagerRecTimer.RECEIVE_DADO);
+                                Log.d("TAGNAME", "FINALISOU doWork");
+                                Toast.makeText(EditForm.this, "Chegou!! "+outputdata, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+
             }
         });
 
