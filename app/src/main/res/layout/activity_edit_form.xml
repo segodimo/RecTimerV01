@@ -41,7 +41,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/btnDatai"
+                android:id="@+id/btnDataf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="4dp"
@@ -54,14 +54,14 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/btnTimei"
+                android:id="@+id/btnTimef"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_weight="2"
                 android:background="#004D40"
                 android:paddingVertical="8dp"
-                android:text="00:00"
+                android:text="00:00:00"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp" />
@@ -85,7 +85,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/btnDataf"
+                android:id="@+id/btnDatai"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="4dp"
@@ -98,14 +98,14 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/btnTimef"
+                android:id="@+id/btnTimei"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_weight="2"
                 android:background="#827717"
                 android:paddingVertical="8dp"
-                android:text="00:00"
+                android:text="00:00:00"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp" />

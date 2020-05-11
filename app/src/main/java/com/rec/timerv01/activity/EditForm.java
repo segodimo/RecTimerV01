@@ -45,14 +45,15 @@ public class EditForm extends AppCompatActivity {
     private Runnable runnable;
     private Handler handler = new Handler();
 
-    Calendar actualf = Calendar.getInstance();
-    Calendar calendarf = Calendar.getInstance();
-    
-    Calendar actuali = Calendar.getInstance();
-    Calendar calendari = Calendar.getInstance();
+    Calendar actuali;
+    Calendar calendari;
 
-    private int minutosi,horai,diai,mesi,anoi;
-    private int minutosf,horaf,diaf,mesf,anof;
+    Calendar actualf;
+    Calendar calendarf;
+
+
+    private int segi,minutosi,horai,diai,mesi,anoi;
+    private int segf,minutosf,horaf,diaf,mesf,anof;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +74,76 @@ public class EditForm extends AppCompatActivity {
         AtualizarHora();
 
 
+
+        /*============================================================*/
+
+        btnDatai.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actuali = Calendar.getInstance();
+                calendari = Calendar.getInstance();
+
+                anoi = actuali.get(Calendar.YEAR);
+                mesi = actuali.get(Calendar.MONTH);
+                diai = actuali.get(Calendar.DAY_OF_MONTH);
+
+
+                DatePickerDialog datepickerdialog = new DatePickerDialog(v.getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int y, int m, int d) {
+                        calendari.set(Calendar.DAY_OF_MONTH,d);
+                        calendari.set(Calendar.MONTH,m);
+                        calendari.set(Calendar.YEAR,y);
+
+                        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                        String strDate = format.format(calendari.getTime());
+                        btnDatai.setText(strDate);
+
+                    }
+                },anoi,mesi,diai);
+                datepickerdialog.show();
+            }
+        });
+
+        btnTimei.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actuali = Calendar.getInstance();
+                calendari = Calendar.getInstance();
+
+                horai = actuali.get(Calendar.HOUR_OF_DAY);
+                minutosi = actuali.get(Calendar.MINUTE);
+                //segi = actuali.get(Calendar.SECOND);
+
+                TimePickerDialog timepickerdialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int h, int m) {
+                        calendari.set(Calendar.HOUR_OF_DAY,h);
+                        calendari.set(Calendar.MINUTE,m);
+                        calendari.set(Calendar.SECOND,0);
+
+                        btnTimei.setText(String.format("%02d:%02d", h, m));
+
+                    }
+                }, horai,minutosi,true);
+                timepickerdialog.show();
+            }
+        });
+
+        /*============================================================*/
+
+
+
+
+
+
+        /*============================================================*/
         btnDataf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                actualf = Calendar.getInstance();
+                calendarf = Calendar.getInstance();
+
                 anof = actualf.get(Calendar.YEAR);
                 mesf = actualf.get(Calendar.MONTH);
                 diaf = actualf.get(Calendar.DAY_OF_MONTH);
@@ -102,6 +170,9 @@ public class EditForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                actualf = Calendar.getInstance();
+                calendarf = Calendar.getInstance();
+
                 horaf = actualf.get(Calendar.HOUR_OF_DAY);
                 minutosf = actualf.get(Calendar.MINUTE);
 
@@ -119,52 +190,14 @@ public class EditForm extends AppCompatActivity {
             }
         });
 
-
-        btnDatai.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                anoi = actuali.get(Calendar.YEAR);
-                mesi = actuali.get(Calendar.MONTH);
-                diai = actuali.get(Calendar.DAY_OF_MONTH);
+        /*============================================================*/
 
 
-                DatePickerDialog datepickerdialog = new DatePickerDialog(v.getContext(), new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int y, int m, int d) {
-                        calendari.set(Calendar.DAY_OF_MONTH,d);
-                        calendari.set(Calendar.MONTH,m);
-                        calendari.set(Calendar.YEAR,y);
 
-                        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                        String strDate = format.format(calendari.getTime());
-                        btnDatai.setText(strDate);
 
-                    }
-                },anoi,mesi,diai);
-                datepickerdialog.show();
-            }
-        });
 
-        btnTimei.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                horai = actuali.get(Calendar.HOUR_OF_DAY);
-                minutosi = actuali.get(Calendar.MINUTE);
 
-                TimePickerDialog timepickerdialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int h, int m) {
-                        calendari.set(Calendar.HOUR_OF_DAY,h);
-                        calendari.set(Calendar.MINUTE,m);
-
-                        btnTimei.setText(String.format("%02d:%02d", h, m));
-
-                    }
-                }, horai,minutosi,true);
-                timepickerdialog.show();
-            }
-        });
 
         inptIntervalo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,13 +226,17 @@ public class EditForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String tag = "tag1";
-                Long ddf = calendarf.getTimeInMillis();
-                Long dda = System.currentTimeMillis();
-                Long AlertTime = (calendarf.getTimeInMillis() - System.currentTimeMillis())/1000/60;
+                actuali = Calendar.getInstance();
+                Long ddi = calendari.getTimeInMillis();
+                Long dda = actuali.getTimeInMillis();
+                //Long dda = System.currentTimeMillis();
+                Long AlertTimei = (calendari.getTimeInMillis() - actuali.getTimeInMillis());
 
-                Log.d("TAGNAME", "ddf "+String.valueOf(ddf));
+                Log.d("TAGNAME", "ddf "+String.valueOf(calendari.getTime())+" ddi "+ddi);
+                Log.d("TAGNAME", "dda "+String.valueOf(actuali.getTime())+" dda "+dda);
                 Log.d("TAGNAME", "dda "+String.valueOf(dda));
-                Log.d("TAGNAME", "AlertTime "+String.valueOf(AlertTime));
+                Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei ));
+                //Log.d("TAGNAME", "ddf "+String.valueOf(System.getTime())+" ddi "+dda);
 
                 //int random = (int)(Math.random() * 50 * 1); // *** Otro Tag
 
@@ -210,7 +247,7 @@ public class EditForm extends AppCompatActivity {
                         .build();
                 /*============================================================*/
 //                OneTimeWorkRequest noti = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
-//                        .setInitialDelay(AlertTime, TimeUnit.MILLISECONDS).addTag(tag)
+//                        .setInitialDelay(AlertTimei, TimeUnit.MILLISECONDS).addTag(tag)
 //                        //.setInputData(data)
 //                        .build();
 
@@ -219,7 +256,7 @@ public class EditForm extends AppCompatActivity {
 
                 final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
                         //.setInputData(data)
-                        .setInitialDelay(AlertTime, TimeUnit.MINUTES)
+                        .setInitialDelay(AlertTimei, TimeUnit.MILLISECONDS)
                         .addTag(tag)
                         .build();
 
@@ -237,7 +274,7 @@ public class EditForm extends AppCompatActivity {
                                 Data data = workInfo.getOutputData();
                                 String outputdata = data.getString(WorkManagerRecTimer.RECEIVE_DADO);
                                 Log.d("TAGNAME", "FINALISOU doWork");
-                                Toast.makeText(EditForm.this, "Chegou!! "+outputdata, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(EditForm.this, "Chegou!! "+outputdata, Toast.LENGTH_LONG).show();
                             }
                         }
                     }
@@ -257,18 +294,18 @@ public class EditForm extends AppCompatActivity {
     }
 
     private void AtualizarHora() {
-        final Calendar calendarrt = Calendar.getInstance();
+        final Calendar calendarRt = Calendar.getInstance();
 
         runnable = new Runnable() {
             @Override
             public void run() {
 
-                calendarrt.setTimeInMillis(System.currentTimeMillis());
+                calendarRt.setTimeInMillis(System.currentTimeMillis());
 
                 String tiempo = String.format("%02d:%02d:%02d",
-                        calendarrt.get(Calendar.HOUR_OF_DAY),
-                        calendarrt.get(Calendar.MINUTE),
-                        calendarrt.get(Calendar.SECOND));
+                        calendarRt.get(Calendar.HOUR_OF_DAY),
+                        calendarRt.get(Calendar.MINUTE),
+                        calendarRt.get(Calendar.SECOND));
                 txtTimeRT.setText(tiempo);
 
                 long agora = SystemClock.uptimeMillis();
