@@ -10,9 +10,11 @@ import androidx.work.OneTimeWorkRequest;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +30,7 @@ import com.rec.timerv01.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class EditForm extends AppCompatActivity {
@@ -44,6 +47,8 @@ public class EditForm extends AppCompatActivity {
     private Button btnStop;
     private Runnable runnable;
     private Handler handler = new Handler();
+    private TextToSpeech txtfala;
+    private Intent intent;
 
     Calendar actuali;
     Calendar calendari;
@@ -72,6 +77,16 @@ public class EditForm extends AppCompatActivity {
         btnStop = findViewById(R.id.btnStop);
 
         AtualizarHora();
+
+        // TTS
+        txtfala = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    txtfala.setLanguage(Locale.getDefault());
+                }
+            }
+        });
 
 
 
@@ -225,18 +240,17 @@ public class EditForm extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 String tag = "tag1";
                 actuali = Calendar.getInstance();
                 Long ddi = calendari.getTimeInMillis();
                 Long dda = actuali.getTimeInMillis();
-                //Long dda = System.currentTimeMillis();
                 Long AlertTimei = (calendari.getTimeInMillis() - actuali.getTimeInMillis());
 
                 Log.d("TAGNAME", "ddf "+String.valueOf(calendari.getTime())+" ddi "+ddi);
                 Log.d("TAGNAME", "dda "+String.valueOf(actuali.getTime())+" dda "+dda);
-                Log.d("TAGNAME", "dda "+String.valueOf(dda));
-                Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei ));
-                //Log.d("TAGNAME", "ddf "+String.valueOf(System.getTime())+" ddi "+dda);
+                Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
 
                 //int random = (int)(Math.random() * 50 * 1); // *** Otro Tag
 
@@ -275,6 +289,10 @@ public class EditForm extends AppCompatActivity {
                                 String outputdata = data.getString(WorkManagerRecTimer.RECEIVE_DADO);
                                 Log.d("TAGNAME", "FINALISOU doWork");
                                 Toast.makeText(EditForm.this, "Chegou!! "+outputdata, Toast.LENGTH_LONG).show();
+
+                                //String toSpeak = "testando fala ok";
+                                //txtfala.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                                
                             }
                         }
                     }
@@ -286,8 +304,17 @@ public class EditForm extends AppCompatActivity {
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("tag1");
-                Toast.makeText(EditForm.this, "Alarma Eliminada", Toast.LENGTH_SHORT).show();
+                //WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("tag1");
+                //Toast.makeText(EditForm.this, "Alarma Eliminada", Toast.LENGTH_SHORT).show();
+                /*============================================================*/
+
+                intent = new Intent(getApplicationContext(), FalaTextToSpeechService.class);
+                //intent.putString(INTENT_TXT, value);
+                startService(intent);
+
+                //context.startService(new Intent(context, TTS.class));
+                /*============================================================*/
+
             }
         });
 
