@@ -11,6 +11,8 @@ import androidx.work.OneTimeWorkRequest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -128,6 +130,7 @@ public class EditForm extends AppCompatActivity {
 
                 horai = actuali.get(Calendar.HOUR_OF_DAY);
                 minutosi = actuali.get(Calendar.MINUTE);
+                minutosi = minutosi+1; //AUMENTA UM MINUTO NA ALARME
                 //segi = actuali.get(Calendar.SECOND);
 
                 TimePickerDialog timepickerdialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
@@ -270,12 +273,15 @@ public class EditForm extends AppCompatActivity {
 
                 final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
                         //.setInputData(data)
-                        .setInitialDelay(AlertTimei, TimeUnit.MILLISECONDS)
+                        //.setInitialDelay(AlertTimei, TimeUnit.MILLISECONDS)
+                        .setInitialDelay(5000, TimeUnit.MILLISECONDS)
                         .addTag(tag)
                         .build();
 
                 WorkManager.getInstance(getApplicationContext()).enqueue(workRequest);
                 /*============================================================*/
+
+                UnMuteAudio();
 
                 Toast.makeText(EditForm.this, "Alarma Guardada", Toast.LENGTH_SHORT).show();
 
@@ -304,20 +310,36 @@ public class EditForm extends AppCompatActivity {
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("tag1");
-                //Toast.makeText(EditForm.this, "Alarma Eliminada", Toast.LENGTH_SHORT).show();
-                /*============================================================*/
-
-                intent = new Intent(getApplicationContext(), FalaTextToSpeechService.class);
-                //intent.putString(INTENT_TXT, value);
-                startService(intent);
-
-                //context.startService(new Intent(context, TTS.class));
-                /*============================================================*/
-
+                WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("tag1");
+                Toast.makeText(EditForm.this, "Alarma Eliminada", Toast.LENGTH_SHORT).show();
             }
         });
 
+    }
+
+    public void UnMuteAudio(){
+        //AudioManager mAlramMAnager = (AudioManager) EditForm.getSystemService(getApplicationContext().AUDIO_SERVICE);
+        AudioManager mAlramMAnager=(AudioManager)getSystemService(getApplicationContext().AUDIO_SERVICE);
+
+        //mAlramMAnager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+        //mAlramMAnager.setStreamVolume(AudioManager.STREAM_MUSIC, mAlramMAnager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+        //mAlramMAnager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+        mAlramMAnager.setStreamVolume(AudioManager.STREAM_MUSIC,4 , AudioManager.FLAG_SHOW_UI);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mAlramMAnager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_UNMUTE, 0);
+            mAlramMAnager.adjustStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_UNMUTE, 0);
+            mAlramMAnager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE,0);
+            mAlramMAnager.adjustStreamVolume(AudioManager.STREAM_RING, AudioManager.ADJUST_UNMUTE, 0);
+            mAlramMAnager.adjustStreamVolume(AudioManager.STREAM_SYSTEM, AudioManager.ADJUST_UNMUTE, 0);
+        } else {
+            mAlramMAnager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
+            mAlramMAnager.setStreamMute(AudioManager.STREAM_ALARM, false);
+            mAlramMAnager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+            mAlramMAnager.setStreamMute(AudioManager.STREAM_RING, false);
+            mAlramMAnager.setStreamMute(AudioManager.STREAM_SYSTEM, false);
+        }
     }
 
     private void AtualizarHora() {

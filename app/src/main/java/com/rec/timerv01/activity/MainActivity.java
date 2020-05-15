@@ -19,21 +19,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        irParaEdit();
+
 
         btnPlus = findViewById(R.id.btnPlus);
 
         btnPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent para una Activityes pasando dados
-                Intent intent = new Intent(getApplicationContext(), EditForm.class);
-                // PASSAR DADOS
-//                intent.putExtra("titulo", "Titulo Txt");
-                /*                intent.putExtra("txt", "Txt xoxoxoxoxoxxooxoxoxo xoxoxoxoxo xoxoxoxoxoxxooxoxoxo");*/
-                startActivity(intent);
+
 
 
             }
         });
+    }
+
+    private void irParaEdit(){
+        //Intent para una Activityes pasando dados
+        Intent intent = new Intent(getApplicationContext(), EditForm.class);
+        // PASSAR DADOS
+//        intent.putExtra("titulo", "Titulo Txt");
+//        intent.putExtra("txt", "Txt xoxoxoxoxoxxooxoxoxo xoxoxoxoxo xoxoxoxoxoxxooxoxoxo");
+        startActivity(intent);
     }
 }

@@ -30,12 +30,10 @@ public class WorkManagerRecTimer extends Worker {
         txtfala = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) {
-                    //txtfala.setLanguage(Locale.US);
-                    txtfala.setLanguage(Locale.getDefault());
-                }
+                if (status != TextToSpeech.ERROR) txtfala.setLanguage(Locale.getDefault());
             }
         });
+
     }
 
     @NonNull
@@ -58,7 +56,9 @@ public class WorkManagerRecTimer extends Worker {
                 .putString(RECEIVE_DADO, "TXTXTXTXTTX")
                 .build();
 
-        displayNotification("Hey I am your work", "work is finished");
+        //displayNotification("TITULO", "txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt");
+
+        falaAlarme();
 
         return Result.success(data1);
     }
@@ -80,12 +80,13 @@ public class WorkManagerRecTimer extends Worker {
 
         manager.notify(1, builder.build());
 
+        falaAlarme();
+
     }
 
     private  void falaAlarme(){
-        String toSpeak = "Mussum Ipsum cacilds vidis litro abertis.";
+        String toSpeak = "Testando fala, 1, 2, 3,";
         txtfala.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-
-        Toast.makeText(getApplicationContext(), "AAAAAAAAAA", Toast.LENGTH_LONG).show();
+        Log.d("TAGNAME", "Pasou por aquI!!");
     }
 }
