@@ -16,7 +16,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +31,6 @@ import com.rec.timerv01.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class EditForm extends AppCompatActivity {
@@ -49,8 +47,8 @@ public class EditForm extends AppCompatActivity {
     private Button btnStop;
     private Runnable runnable;
     private Handler handler = new Handler();
-    private TextToSpeech txtfala;
     private Intent intent;
+
 
     Calendar actuali;
     Calendar calendari;
@@ -58,9 +56,12 @@ public class EditForm extends AppCompatActivity {
     Calendar actualf;
     Calendar calendarf;
 
+    private Long AlertTimei;
+    private Long AlertTimef;
 
     private int segi,minutosi,horai,diai,mesi,anoi;
     private int segf,minutosf,horaf,diaf,mesf,anof;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,20 +81,7 @@ public class EditForm extends AppCompatActivity {
 
         AtualizarHora();
 
-        // TTS
-        txtfala = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) {
-                    txtfala.setLanguage(Locale.getDefault());
-                }
-            }
-        });
-
-
-
         /*============================================================*/
-
         btnDatai.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,7 +135,6 @@ public class EditForm extends AppCompatActivity {
                 timepickerdialog.show();
             }
         });
-
         /*============================================================*/
 
 
@@ -187,12 +174,12 @@ public class EditForm extends AppCompatActivity {
         btnTimef.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 actualf = Calendar.getInstance();
                 calendarf = Calendar.getInstance();
 
                 horaf = actualf.get(Calendar.HOUR_OF_DAY);
                 minutosf = actualf.get(Calendar.MINUTE);
+                minutosf= minutosf+1; //AUMENTA UM MINUTO NA ALARME
 
                 TimePickerDialog timepickerdialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -207,14 +194,7 @@ public class EditForm extends AppCompatActivity {
                 timepickerdialog.show();
             }
         });
-
         /*============================================================*/
-
-
-
-
-
-
 
 
         inptIntervalo.setOnClickListener(new View.OnClickListener() {
@@ -244,65 +224,26 @@ public class EditForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                //------------------------------------------------------------------------------------------------
+                if(calendari != null){
+                    Log.d("TAGNAME", String.valueOf(Calendar.getInstance().getTime())+" (ddai) "+Calendar.getInstance().getTimeInMillis());
+                    Log.d("TAGNAME", String.valueOf(calendari.getTime())+" ddsf "+calendari.getTimeInMillis());
+                    AlertTimei = (calendari.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
+                    Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
+                    //salvarAlarme("tag1", AlertTimei, "titititi", "Detalhe funcionando", 1);
+                    salvarAlarme("tag1", 8000, "titititi", "T.X.T. Fala funcionando", 1);
+                }
+                //------------------------------------------------------------------------------------------------
+                if(calendarf != null){
+                    Log.d("TAGNAME", String.valueOf(Calendar.getInstance().getTime())+" (ddai) "+Calendar.getInstance().getTimeInMillis());
+                    Log.d("TAGNAME", String.valueOf(calendarf.getTime())+" dddf "+calendarf.getTimeInMillis());
+                    AlertTimef = (calendarf.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
+                    Log.d("TAGNAME", "AlertTimef "+String.valueOf(AlertTimef / 1000));
+                    //salvarAlarme("tag2", AlertTimef, "titititi", "Alarme Final", 1);
+                    salvarAlarme("tag2", 15000, "titititi", "Alarme Final", 1);
+                }
+                //------------------------------------------------------------------------------------------------
 
-                String tag = "tag1";
-                actuali = Calendar.getInstance();
-                Long ddi = calendari.getTimeInMillis();
-                Long dda = actuali.getTimeInMillis();
-                Long AlertTimei = (calendari.getTimeInMillis() - actuali.getTimeInMillis());
-
-                Log.d("TAGNAME", "ddf "+String.valueOf(calendari.getTime())+" ddi "+ddi);
-                Log.d("TAGNAME", "dda "+String.valueOf(actuali.getTime())+" dda "+dda);
-                Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
-
-                //int random = (int)(Math.random() * 50 * 1); // *** Otro Tag
-
-                Data data = new Data.Builder()
-                        .putString("titulo","txt tit")
-                        .putString("detalle","txt detalhe")
-                        .putInt("id_noti", 1)
-                        .build();
-                /*============================================================*/
-//                OneTimeWorkRequest noti = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
-//                        .setInitialDelay(AlertTimei, TimeUnit.MILLISECONDS).addTag(tag)
-//                        //.setInputData(data)
-//                        .build();
-
-//                WorkManager instance = WorkManager.getInstance(getApplicationContext());
-//                instance.enqueue(workRequest);
-
-                final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
-                        //.setInputData(data)
-                        //.setInitialDelay(AlertTimei, TimeUnit.MILLISECONDS)
-                        .setInitialDelay(5000, TimeUnit.MILLISECONDS)
-                        .addTag(tag)
-                        .build();
-
-                WorkManager.getInstance(getApplicationContext()).enqueue(workRequest);
-                /*============================================================*/
-
-                UnMuteAudio();
-
-                Toast.makeText(EditForm.this, "Alarma Guardada", Toast.LENGTH_SHORT).show();
-
-
-                WorkManager.getInstance(EditForm.this).getWorkInfoByIdLiveData(workRequest.getId()).observe(EditForm.this, new Observer<WorkInfo>() {
-                    @Override
-                    public void onChanged(@Nullable WorkInfo workInfo) {
-                        if(workInfo  != null ){
-                            if(workInfo.getState().isFinished()){
-                                Data data = workInfo.getOutputData();
-                                String outputdata = data.getString(WorkManagerRecTimer.RECEIVE_DADO);
-                                Log.d("TAGNAME", "FINALISOU doWork");
-                                Toast.makeText(EditForm.this, "Chegou!! "+outputdata, Toast.LENGTH_LONG).show();
-
-                                //String toSpeak = "testando fala ok";
-                                //txtfala.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-                                
-                            }
-                        }
-                    }
-                });
 
             }
         });
@@ -310,12 +251,68 @@ public class EditForm extends AppCompatActivity {
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("tag1");
-                Toast.makeText(EditForm.this, "Alarma Eliminada", Toast.LENGTH_SHORT).show();
+//                WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("tag1");
+//                Toast.makeText(EditForm.this, "Alarma Eliminada", Toast.LENGTH_SHORT).show();
             }
         });
 
+
+    }//FINAL DO ONCREATE
+
+    private void salvarAlarme(String tag, int alertTime, String tit, String txt, int idnoti) {
+        /*============================================================*/
+        // SEND DADOS PRO WORKMANAGER
+        Data data = new Data.Builder()
+                .putString("titulo",tit)
+                .putString("detalle",txt)
+                .putInt("idnoti", idnoti)
+                .build();
+        /*============================================================*/
+        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
+                .setInputData(data)
+                .setInitialDelay(alertTime, TimeUnit.MILLISECONDS)
+                //.setInitialDelay(5000, TimeUnit.MILLISECONDS)
+                .addTag(tag)
+                .build();
+        WorkManager.getInstance(getApplicationContext()).enqueue(workRequest);
+        /*============================================================*/
+        UnMuteAudio();
+        Toast.makeText(EditForm.this, "Alarma Guardada", Toast.LENGTH_SHORT).show();
+        //-------------------------------------------------------------
+        intent = new Intent(getApplicationContext(), FalaTTS.class);
+        intent.putExtra("FALATXT", "");
+        getApplicationContext().startService(intent);
+        /*=============================================================*/
+        // RECEIVE DADOS DO WORKMANAGER
+        WorkManager.getInstance(EditForm.this).getWorkInfoByIdLiveData(workRequest.getId()).observe(EditForm.this, new Observer<WorkInfo>() {
+            @Override
+            public void onChanged(@Nullable WorkInfo workInfo) {
+                if(workInfo  != null ){
+                    if(workInfo.getState().isFinished()){
+                        Data data = workInfo.getOutputData();
+                        String outputdata = data.getString(WorkManagerRecTimer.RECEIVE_DADO);
+                        Log.d("TAGNAME", "FINALISOU doWork");
+                        Toast.makeText(EditForm.this, "Chegou!! "+outputdata, Toast.LENGTH_LONG).show();
+
+                    }
+                }
+            }
+        });
+        /*=============================================================*/
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void UnMuteAudio(){
         //AudioManager mAlramMAnager = (AudioManager) EditForm.getSystemService(getApplicationContext().AUDIO_SERVICE);
@@ -324,7 +321,7 @@ public class EditForm extends AppCompatActivity {
         //mAlramMAnager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
         //mAlramMAnager.setStreamVolume(AudioManager.STREAM_MUSIC, mAlramMAnager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
         //mAlramMAnager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
-        mAlramMAnager.setStreamVolume(AudioManager.STREAM_MUSIC,4 , AudioManager.FLAG_SHOW_UI);
+        mAlramMAnager.setStreamVolume(AudioManager.STREAM_MUSIC,2 , AudioManager.FLAG_SHOW_UI);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -365,5 +362,6 @@ public class EditForm extends AppCompatActivity {
         };
         runnable.run();
     }
+
 
 }

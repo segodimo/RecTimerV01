@@ -17,6 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".activity.FalaTTSstop" />
+        <service android:name=".activity.FalaTTS" />
     </application>
 
 </manifest>

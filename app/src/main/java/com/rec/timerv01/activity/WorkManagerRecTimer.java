@@ -1,8 +1,10 @@
 package com.rec.timerv01.activity;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -21,8 +23,9 @@ import java.util.Locale;
 public class WorkManagerRecTimer extends Worker {
 
     private TextToSpeech txtfala;
+    private Intent intent;
 
-    public static final String RECEIVE_DADO = "receive_dado";
+    public static final String RECEIVE_DADO = "receive_dado"; //SEND PARA DEVOLVER
 
     public WorkManagerRecTimer(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -39,32 +42,41 @@ public class WorkManagerRecTimer extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-
-        Log.d("TAGNAME", "doWork");
-
-//        for (int i=3; i > 0; i-- ){
-//            Log.d("TAGNAME", "i = " + i);
-//            try{
-//                Thread.sleep(1000);
-//            }catch (InterruptedException e){
-//                e.printStackTrace();
-//                return  Result.failure();
-//            }
-//        }
-
+        Log.d("TAGNAME", "INICIANDO DOWORK");
+        // ------------------------------------------------------------------------------------------
+        // RECEIVE DADOS DO EDITFORM
+        String titulo = getInputData().getString("titulo");
+        String detalhe = getInputData().getString("detalle");
+        int id = (int) getInputData().getLong("idnoti", 0);
+        // ------------------------------------------------------------------------------------------
+        // SEND DADOS PRO EDITFORM
         Data data1 = new Data.Builder()
-                .putString(RECEIVE_DADO, "TXTXTXTXTTX")
+                .putString(RECEIVE_DADO, "Recevendo Dado Teste")
                 .build();
+        // ------------------------------------------------------------------------------------------
+        displayNotification("TITULO", "txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt", detalhe);
 
-        //displayNotification("TITULO", "txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt");
-
-        falaAlarme();
-
+        falaAlarme(detalhe);
         return Result.success(data1);
+        // ------------------------------------------------------------------------------------------
     }
 
-    private void displayNotification(String task, String desc) {
 
+    private  void falaAlarme(String falatxt){
+//        String toSpeak = "Testando fala, 1, 2, 3,"+detalhe;
+//        txtfala.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+//        Log.d("TAGNAME", "Pasou por aquI!!");
+
+//        intent = new Intent(getApplicationContext(), FalaTTS.class);
+//        intent.putExtra("titulo", "TXTXTXTXTXTX");
+//        getApplicationContext().startService(intent);
+
+        intent = new Intent(getApplicationContext(), FalaTTS.class);
+        intent.putExtra("FALATXT", falatxt);
+        getApplicationContext().startService(intent);
+    }
+
+    private void displayNotification(String task, String desc, String detalhe) {
         NotificationManager manager =
                 (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -72,21 +84,15 @@ public class WorkManagerRecTimer extends Worker {
             NotificationChannel channel = new NotificationChannel("simplifiedcoding", "simplifiedcoding", NotificationManager.IMPORTANCE_DEFAULT);
             manager.createNotificationChannel(channel);
         }
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "simplifiedcoding")
                 .setContentTitle(task)
                 .setContentText(desc)
                 .setSmallIcon(R.mipmap.ic_launcher);
 
         manager.notify(1, builder.build());
-
-        falaAlarme();
-
+        //falaAlarme(detalhe);
     }
 
-    private  void falaAlarme(){
-        String toSpeak = "Testando fala, 1, 2, 3,";
-        txtfala.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-        Log.d("TAGNAME", "Pasou por aquI!!");
-    }
+
+
 }
