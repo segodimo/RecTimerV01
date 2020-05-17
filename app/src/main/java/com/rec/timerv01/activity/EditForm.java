@@ -56,8 +56,10 @@ public class EditForm extends AppCompatActivity {
     Calendar actualf;
     Calendar calendarf;
 
-    private Long AlertTimei;
-    private Long AlertTimef;
+    private int AlertTimei;
+    private int AlertTimef;
+
+    private int Intervalo;
 
     private int segi,minutosi,horai,diai,mesi,anoi;
     private int segf,minutosf,horaf,diaf,mesf,anof;
@@ -186,6 +188,7 @@ public class EditForm extends AppCompatActivity {
                     public void onTimeSet(TimePicker view, int h, int m) {
                         calendarf.set(Calendar.HOUR_OF_DAY,h);
                         calendarf.set(Calendar.MINUTE,m);
+                        calendarf.set(Calendar.SECOND,0);
 
                         btnTimef.setText(String.format("%02d:%02d", h, m));
 
@@ -227,21 +230,49 @@ public class EditForm extends AppCompatActivity {
                 //------------------------------------------------------------------------------------------------
                 if(calendari != null){
                     Log.d("TAGNAME", String.valueOf(Calendar.getInstance().getTime())+" (ddai) "+Calendar.getInstance().getTimeInMillis());
-                    Log.d("TAGNAME", String.valueOf(calendari.getTime())+" ddsf "+calendari.getTimeInMillis());
-                    AlertTimei = (calendari.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
+                    Log.d("TAGNAME", String.valueOf(calendari.getTime())+" (ddsf) "+calendari.getTimeInMillis());
+                    AlertTimei = (int) (long) (calendari.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
                     Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
                     //salvarAlarme("tag1", AlertTimei, "titititi", "Detalhe funcionando", 1);
-                    salvarAlarme("tag1", 8000, "titititi", "T.X.T. Fala funcionando", 1);
+                    //salvarAlarme("tag1", 8000, "titititi", "T.X.T. Fala funcionando", 1);
                 }
                 //------------------------------------------------------------------------------------------------
                 if(calendarf != null){
                     Log.d("TAGNAME", String.valueOf(Calendar.getInstance().getTime())+" (ddai) "+Calendar.getInstance().getTimeInMillis());
-                    Log.d("TAGNAME", String.valueOf(calendarf.getTime())+" dddf "+calendarf.getTimeInMillis());
-                    AlertTimef = (calendarf.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
+                    Log.d("TAGNAME", String.valueOf(calendarf.getTime())+" (dddf) "+calendarf.getTimeInMillis());
+                    AlertTimef = (int) (long)(calendarf.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
                     Log.d("TAGNAME", "AlertTimef "+String.valueOf(AlertTimef / 1000));
                     //salvarAlarme("tag2", AlertTimef, "titititi", "Alarme Final", 1);
-                    salvarAlarme("tag2", 15000, "titititi", "Alarme Final", 1);
+                    //salvarAlarme("tag2", 15000, "titititi", "Alarme Final", 1);
                 }
+                //------------------------------------------------------------------------------------------------
+
+
+                Intervalo = 5; // em Segundos
+                AlertTimei = 3000; // em ms
+                AlertTimef = 60000; // em ms
+
+                Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
+                Log.d("TAGNAME", "AlertTimef "+String.valueOf(AlertTimef / 1000));
+
+//                for (int i = AlertTimei+Intervalo; i < AlertTimef; i+= Intervalo){
+//
+//                    int hh = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+//                    int mm = Calendar.getInstance().get(Calendar.MINUTE);
+//                    int ss = Calendar.getInstance().get(Calendar.SECOND);
+//
+//                    Log.d("TAGNAME", "i "+i);
+//                    salvarAlarme("tag1", i, "titititi", String.valueOf(hh+" horas"+mm+" minutos "+ss+" segundos"), 1);
+//                }
+
+                salvarAlarme("tag1", AlertTimei, "titititi", "fala teste", (AlertTimef-AlertTimei), Intervalo);
+
+//                if(calendarf != null && calendari != null && AlertTimef > AlertTimei){
+//                    //salvarAlarme("tag1", AlertTimei, "titititi", String.valueOf(hh+" horas"+mm+" minutos "+ss+" segundos"), 1);
+//                    //salvarAlarme("tag2", AlertTimef, "titititi", "Alarme Final", 1);
+//                }else{
+//                    Toast.makeText(EditForm.this, "Death Timer < Start Timer", Toast.LENGTH_SHORT).show();
+//                }
                 //------------------------------------------------------------------------------------------------
 
 
@@ -251,21 +282,22 @@ public class EditForm extends AppCompatActivity {
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("tag1");
-//                Toast.makeText(EditForm.this, "Alarma Eliminada", Toast.LENGTH_SHORT).show();
+                WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("tag1");
+                Toast.makeText(EditForm.this, "Alarma Eliminada", Toast.LENGTH_SHORT).show();
             }
         });
 
 
     }//FINAL DO ONCREATE
 
-    private void salvarAlarme(String tag, int alertTime, String tit, String txt, int idnoti) {
+    private void salvarAlarme(String tag, int alertTime, String tit, String txt, int diffA, int intrv) {
         /*============================================================*/
         // SEND DADOS PRO WORKMANAGER
         Data data = new Data.Builder()
                 .putString("titulo",tit)
                 .putString("detalle",txt)
-                .putInt("idnoti", idnoti)
+                .putInt("diffA", diffA)
+                .putInt("intrv", intrv)
                 .build();
         /*============================================================*/
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
@@ -291,8 +323,8 @@ public class EditForm extends AppCompatActivity {
                     if(workInfo.getState().isFinished()){
                         Data data = workInfo.getOutputData();
                         String outputdata = data.getString(WorkManagerRecTimer.RECEIVE_DADO);
-                        Log.d("TAGNAME", "FINALISOU doWork");
-                        Toast.makeText(EditForm.this, "Chegou!! "+outputdata, Toast.LENGTH_LONG).show();
+                        Log.d("TAGNAME", "FINALISOU DOWORK");
+                        //Toast.makeText(EditForm.this, "Chegou!! "+outputdata, Toast.LENGTH_LONG).show();
 
                     }
                 }

@@ -18,12 +18,15 @@ import androidx.work.WorkerParameters;
 
 import com.rec.timerv01.R;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 public class WorkManagerRecTimer extends Worker {
 
     private TextToSpeech txtfala;
     private Intent intent;
+    private Boolean trabalha = true;
+    private Integer cnt = 0;
 
     public static final String RECEIVE_DADO = "receive_dado"; //SEND PARA DEVOLVER
 
@@ -39,6 +42,8 @@ public class WorkManagerRecTimer extends Worker {
 
     }
 
+
+
     @NonNull
     @Override
     public Result doWork() {
@@ -47,16 +52,30 @@ public class WorkManagerRecTimer extends Worker {
         // RECEIVE DADOS DO EDITFORM
         String titulo = getInputData().getString("titulo");
         String detalhe = getInputData().getString("detalle");
-        int id = (int) getInputData().getLong("idnoti", 0);
+        int diffA = getInputData().getInt("diffA", 0);
+        int intrv = getInputData().getInt("intrv", 0);
+        Log.d("TAGNAME", "diffA " + diffA);
+        // ------------------------------------------------------------------------------------------
+        while ( cnt<=diffA && trabalha){
+            Log.d("TAGNAME", "doWork: was " + cnt);
+            if (Calendar.getInstance().get(Calendar.SECOND) % intrv == 0) {
+                falaAlarme(" "+ Calendar.getInstance().get(Calendar.MINUTE) +" minutos e "+ Calendar.getInstance().get(Calendar.SECOND)+" segundos");
+            }
+            try{ Thread.sleep(1000); }
+            catch (InterruptedException e){
+                e.printStackTrace();
+                return  Result.failure();
+            }
+            cnt++;
+        }
         // ------------------------------------------------------------------------------------------
         // SEND DADOS PRO EDITFORM
         Data data1 = new Data.Builder()
                 .putString(RECEIVE_DADO, "Recevendo Dado Teste")
                 .build();
         // ------------------------------------------------------------------------------------------
-        displayNotification("TITULO", "txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt", detalhe);
-
-        falaAlarme(detalhe);
+        //displayNotification("TITULO", "txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt", detalhe);
+        falaAlarme("Taimer Finalizado");
         return Result.success(data1);
         // ------------------------------------------------------------------------------------------
     }
@@ -91,6 +110,13 @@ public class WorkManagerRecTimer extends Worker {
 
         manager.notify(1, builder.build());
         //falaAlarme(detalhe);
+    }
+
+    @Override
+    public void onStopped() {
+        super.onStopped();
+        Log.d("TAGNAME", "onStopped ");
+        trabalha = false;
     }
 
 
