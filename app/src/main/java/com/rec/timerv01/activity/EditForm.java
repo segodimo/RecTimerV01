@@ -2,15 +2,17 @@ package com.rec.timerv01.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.work.Data;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 import androidx.work.OneTimeWorkRequest;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,28 +21,25 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.rec.timerv01.R;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 public class EditForm extends AppCompatActivity {
 
     private TextView txtTimeRT;
-    private TextView btnDatai;
-    private TextView btnTimei;
-    private TextView btnDataf;
-    private TextView btnTimef;
-    private TextInputEditText inptIntervalo;
+    private TextInputEditText inptDtH;
+    private TextInputEditText inptDtM;
+    private TextInputEditText inptIvH;
+    private TextInputEditText inptIvM;
+    private TextInputEditText inptIvS;
     private TextInputEditText inptSpeach;
     private Switch switchStatus;
     private FloatingActionButton btnSave;
@@ -50,11 +49,7 @@ public class EditForm extends AppCompatActivity {
     private Intent intent;
 
 
-    Calendar actuali;
-    Calendar calendari;
-
-    Calendar actualf;
-    Calendar calendarf;
+    Calendar calendar;
 
     private int AlertTimei;
     private int AlertTimef;
@@ -64,18 +59,22 @@ public class EditForm extends AppCompatActivity {
     private int segi,minutosi,horai,diai,mesi,anoi;
     private int segf,minutosf,horaf,diaf,mesf,anof;
 
+    private Boolean valida = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_form);
 
+        inptDtH = findViewById(R.id.inptDtH);
+        inptDtM = findViewById(R.id.inptDtM);
+        inptIvH = findViewById(R.id.inptIvH);
+        inptIvM = findViewById(R.id.inptIvM);
+        inptIvS = findViewById(R.id.inptIvS);
+
+
         txtTimeRT = findViewById(R.id.txtTimeRT);
-        btnDatai = findViewById(R.id.btnDatai);
-        btnTimei = findViewById(R.id.btnTimei);
-        btnDataf = findViewById(R.id.btnDataf);
-        btnTimef = findViewById(R.id.btnTimef);
-        inptIntervalo = findViewById(R.id.inptIntervalo);
         inptSpeach = findViewById(R.id.inptSpeach);
         switchStatus = findViewById(R.id.switchStatus);
         btnSave = findViewById(R.id.btnSave);
@@ -84,135 +83,17 @@ public class EditForm extends AppCompatActivity {
         AtualizarHora();
 
         /*============================================================*/
-        btnDatai.setOnClickListener(new View.OnClickListener() {
+        inptDtH.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                actuali = Calendar.getInstance();
-                calendari = Calendar.getInstance();
-
-                anoi = actuali.get(Calendar.YEAR);
-                mesi = actuali.get(Calendar.MONTH);
-                diai = actuali.get(Calendar.DAY_OF_MONTH);
-
-
-                DatePickerDialog datepickerdialog = new DatePickerDialog(v.getContext(), new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int y, int m, int d) {
-                        calendari.set(Calendar.DAY_OF_MONTH,d);
-                        calendari.set(Calendar.MONTH,m);
-                        calendari.set(Calendar.YEAR,y);
-
-                        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                        String strDate = format.format(calendari.getTime());
-                        btnDatai.setText(strDate);
-
-                    }
-                },anoi,mesi,diai);
-                datepickerdialog.show();
+                String h = inptDtH.getText().toString();
+                Toast.makeText(EditForm.this, "h "+h, Toast.LENGTH_SHORT).show();
+                //calendar.set(calendar.HOUR_OF_DAY,h);
             }
         });
 
-        btnTimei.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actuali = Calendar.getInstance();
-                calendari = Calendar.getInstance();
-
-                horai = actuali.get(Calendar.HOUR_OF_DAY);
-                minutosi = actuali.get(Calendar.MINUTE);
-                minutosi = minutosi+1; //AUMENTA UM MINUTO NA ALARME
-                //segi = actuali.get(Calendar.SECOND);
-
-                TimePickerDialog timepickerdialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int h, int m) {
-                        calendari.set(Calendar.HOUR_OF_DAY,h);
-                        calendari.set(Calendar.MINUTE,m);
-                        calendari.set(Calendar.SECOND,0);
-
-                        btnTimei.setText(String.format("%02d:%02d", h, m));
-
-                    }
-                }, horai,minutosi,true);
-                timepickerdialog.show();
-            }
-        });
         /*============================================================*/
 
-
-
-
-
-
-        /*============================================================*/
-        btnDataf.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actualf = Calendar.getInstance();
-                calendarf = Calendar.getInstance();
-
-                anof = actualf.get(Calendar.YEAR);
-                mesf = actualf.get(Calendar.MONTH);
-                diaf = actualf.get(Calendar.DAY_OF_MONTH);
-
-
-                DatePickerDialog datepickerdialog = new DatePickerDialog(v.getContext(), new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int y, int m, int d) {
-                        calendarf.set(Calendar.DAY_OF_MONTH,d);
-                        calendarf.set(Calendar.MONTH,m);
-                        calendarf.set(Calendar.YEAR,y);
-
-                        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                        String strDate = format.format(calendarf.getTime());
-                        btnDataf.setText(strDate);
-
-                    }
-                },anof,mesf,diaf);
-                datepickerdialog.show();
-            }
-        });
-
-        btnTimef.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actualf = Calendar.getInstance();
-                calendarf = Calendar.getInstance();
-
-                horaf = actualf.get(Calendar.HOUR_OF_DAY);
-                minutosf = actualf.get(Calendar.MINUTE);
-                minutosf= minutosf+1; //AUMENTA UM MINUTO NA ALARME
-
-                TimePickerDialog timepickerdialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int h, int m) {
-                        calendarf.set(Calendar.HOUR_OF_DAY,h);
-                        calendarf.set(Calendar.MINUTE,m);
-                        calendarf.set(Calendar.SECOND,0);
-
-                        btnTimef.setText(String.format("%02d:%02d", h, m));
-
-                    }
-                }, horaf,minutosf,true);
-                timepickerdialog.show();
-            }
-        });
-        /*============================================================*/
-
-
-        inptIntervalo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        inptSpeach.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
 
         switchStatus.setOnClickListener(new View.OnClickListener() {
@@ -227,45 +108,52 @@ public class EditForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //------------------------------------------------------------------------------------------------
-                if(calendari != null){
-                    Log.d("TAGNAME", String.valueOf(Calendar.getInstance().getTime())+" (ddai) "+Calendar.getInstance().getTimeInMillis());
-                    Log.d("TAGNAME", String.valueOf(calendari.getTime())+" (ddsf) "+calendari.getTimeInMillis());
-                    AlertTimei = (int) (long) (calendari.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
-                    Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
-                    //salvarAlarme("tag1", AlertTimei, "titititi", "Detalhe funcionando", 1);
-                    //salvarAlarme("tag1", 8000, "titititi", "T.X.T. Fala funcionando", 1);
+
+
+                if(!valida){
+                    //Toast.makeText(EditForm.this, "no valido", Toast.LENGTH_SHORT).show();
+                    //btnSave.setBackgroundColor(Color.parseColor("#ff0000"));
+                    //btnSave.getBackground().mutate().setTint(getApplicationContext().getColor(this, R.color.anyColor));
+                    //btnSave.setBackgroundTintList(getResources().getColorStateList(Color.parseColor("#ff0000"));
+//                    btnSave.setBackgroundTintList(btnSave.valueOf(ContextCompat.getColor(mContext,R.color.mColor)));
+//                    btnSave.setBackgroundTintList(btnSave, ColorStateList.valueOf());
+//                    btnSave.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.favourite_selected));
+                    //btnSave.setBackgroundTintList(btnSave, ColorStateList.valueOf(100, 80, 80, ));
+                    btnSave.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff0000")));
+
+
+
                 }
-                //------------------------------------------------------------------------------------------------
-                if(calendarf != null){
-                    Log.d("TAGNAME", String.valueOf(Calendar.getInstance().getTime())+" (ddai) "+Calendar.getInstance().getTimeInMillis());
-                    Log.d("TAGNAME", String.valueOf(calendarf.getTime())+" (dddf) "+calendarf.getTimeInMillis());
-                    AlertTimef = (int) (long)(calendarf.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
-                    Log.d("TAGNAME", "AlertTimef "+String.valueOf(AlertTimef / 1000));
-                    //salvarAlarme("tag2", AlertTimef, "titititi", "Alarme Final", 1);
-                    //salvarAlarme("tag2", 15000, "titititi", "Alarme Final", 1);
-                }
-                //------------------------------------------------------------------------------------------------
-
-
-                Intervalo = 5; // em Segundos
-                AlertTimei = 3000; // em ms
-                AlertTimef = 60000; // em ms
-
-                Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
-                Log.d("TAGNAME", "AlertTimef "+String.valueOf(AlertTimef / 1000));
-
-//                for (int i = AlertTimei+Intervalo; i < AlertTimef; i+= Intervalo){
-//
-//                    int hh = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-//                    int mm = Calendar.getInstance().get(Calendar.MINUTE);
-//                    int ss = Calendar.getInstance().get(Calendar.SECOND);
-//
-//                    Log.d("TAGNAME", "i "+i);
-//                    salvarAlarme("tag1", i, "titititi", String.valueOf(hh+" horas"+mm+" minutos "+ss+" segundos"), 1);
+                else{
+                    //------------------------------------------------------------------------------------------------
+//                if(calendari != null){
+//                    Log.d("TAGNAME", String.valueOf(Calendar.getInstance().getTime())+" (ddai) "+Calendar.getInstance().getTimeInMillis());
+//                    Log.d("TAGNAME", String.valueOf(calendari.getTime())+" (ddsf) "+calendari.getTimeInMillis());
+//                    AlertTimei = (int) (long) (calendari.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
+//                    Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
+//                    //salvarAlarme("tag1", AlertTimei, "titititi", "Detalhe funcionando", 1);
+//                    //salvarAlarme("tag1", 8000, "titititi", "T.X.T. Fala funcionando", 1);
 //                }
+                    //------------------------------------------------------------------------------------------------
+//                if(calendarf != null){
+//                    Log.d("TAGNAME", String.valueOf(Calendar.getInstance().getTime())+" (ddai) "+Calendar.getInstance().getTimeInMillis());
+//                    Log.d("TAGNAME", String.valueOf(calendarf.getTime())+" (dddf) "+calendarf.getTimeInMillis());
+//                    AlertTimef = (int) (long)(calendarf.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
+//                    Log.d("TAGNAME", "AlertTimef "+String.valueOf(AlertTimef / 1000));
+//                    //salvarAlarme("tag2", AlertTimef, "titititi", "Alarme Final", 1);
+//                    //salvarAlarme("tag2", 15000, "titititi", "Alarme Final", 1);
+//                }
+                    //------------------------------------------------------------------------------------------------
 
-                salvarAlarme("tag1", AlertTimei, "titititi", "fala teste", (AlertTimef-AlertTimei), Intervalo);
+
+                    Intervalo = 5; // em Segundos
+                    AlertTimei = 3000; // em ms
+                    AlertTimef = 60000; // em ms
+
+                    Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
+                    Log.d("TAGNAME", "AlertTimef "+String.valueOf(AlertTimef / 1000));
+
+                    salvarAlarme("tag1", AlertTimei, "titititi", "fala teste", (AlertTimef-AlertTimei), Intervalo);
 
 //                if(calendarf != null && calendari != null && AlertTimef > AlertTimei){
 //                    //salvarAlarme("tag1", AlertTimei, "titititi", String.valueOf(hh+" horas"+mm+" minutos "+ss+" segundos"), 1);
@@ -273,9 +161,8 @@ public class EditForm extends AppCompatActivity {
 //                }else{
 //                    Toast.makeText(EditForm.this, "Death Timer < Start Timer", Toast.LENGTH_SHORT).show();
 //                }
-                //------------------------------------------------------------------------------------------------
-
-
+                    //------------------------------------------------------------------------------------------------
+                }
             }
         });
 
