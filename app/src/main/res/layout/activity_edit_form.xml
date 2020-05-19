@@ -148,10 +148,10 @@
                     android:id="@+id/inptIvM"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed-light"
                     android:inputType="number"
                     android:selectAllOnFocus="true"
-                    android:fontFamily="sans-serif-condensed-light"
-                    android:text="02"
+                    android:text="01"
                     android:textAlignment="center"
                     android:textSize="30sp" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -182,11 +182,12 @@
                     android:fontFamily="sans-serif-condensed-light"
                     android:text="00"
                     android:textAlignment="center"
-                    android:textSize="30sp" />
+                    android:textSize="30sp"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
-
+        
 
         <TextView
             android:id="@+id/lyTTSpech"
@@ -238,6 +239,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:clickable="true"
+        app:backgroundTint="#E65100"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

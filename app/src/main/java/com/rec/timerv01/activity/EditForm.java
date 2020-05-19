@@ -2,24 +2,26 @@ package com.rec.timerv01.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.work.Data;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 import androidx.work.OneTimeWorkRequest;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -31,6 +33,8 @@ import com.rec.timerv01.R;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
+
+import static java.lang.Math.round;
 
 public class EditForm extends AppCompatActivity {
 
@@ -49,7 +53,7 @@ public class EditForm extends AppCompatActivity {
     private Intent intent;
 
 
-    Calendar calendar;
+    Calendar nowdate;
 
     private int AlertTimei;
     private int AlertTimef;
@@ -59,7 +63,7 @@ public class EditForm extends AppCompatActivity {
     private int segi,minutosi,horai,diai,mesi,anoi;
     private int segf,minutosf,horaf,diaf,mesf,anof;
 
-    private Boolean valida = false;
+    private Boolean ioSave = false;
 
 
     @Override
@@ -81,6 +85,115 @@ public class EditForm extends AppCompatActivity {
         btnStop = findViewById(R.id.btnStop);
 
         AtualizarHora();
+
+        /*============================================================*/
+        //AJUSTA E ARDENDONDA(5min) HORARIO PERTO DE ratio = 30min DEPOIS
+        int ratio = 30;
+        int nvHora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int conta = (((Integer.parseInt(Integer.toString(Calendar.getInstance().get(Calendar.MINUTE))))+ratio)/5)*5;
+        if(conta >= 60){
+            inptDtH.setText(Integer.toString(nvHora + 1));
+            inptDtM.setText(Integer.toString(conta - 60));
+        }else{
+            inptDtH.setText(Integer.toString(nvHora));
+            inptDtM.setText(Integer.toString(conta));
+        }
+        /*============================================================*/
+
+        inptDtH.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(2)});
+        inptDtH.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()>1){
+                    inptDtM.requestFocus();
+                }
+                Log.d("TAGNAME", "s "+s.length());
+                Log.d("TAGNAME", "s "+s);
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        inptDtM.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(2)});
+        inptDtM.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()>1){
+                    inptIvH.requestFocus();
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(Integer.parseInt(s.toString()) >= 60){
+                    inptDtM.setText("00");
+                }
+            }
+        });
+
+        inptIvH.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(2)});
+        inptIvH.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()>1){
+                    inptIvM.requestFocus();
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
+
+        inptIvM.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(2)});
+        inptIvM.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()>1){
+                    inptIvS.requestFocus();
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(Integer.parseInt(s.toString()) >= 60){
+                    inptIvM.setText("00");
+                }
+            }
+        });
+
+        inptIvS.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(2)});
+        inptIvS.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()>1){
+                    //inptIvS.requestFocus();
+                    // Check if no view has focus:
+                    hideKeyboard(EditForm.this);
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(Integer.parseInt(s.toString()) >= 60){
+                    inptIvS.setText("00");
+                }
+            }
+        });
+
+
+        /*============================================================*/
+        //inptDtH.setText(Integer.toString(Calendar.getInstance().get(Calendar.HOUR_OF_DAY)));
+        //inptDtM.setText(Integer.toString(Calendar.getInstance().get(Calendar.MINUTE)));
+        //inptDtM.setText(Integer.toString(conta*7));
+
 
         /*============================================================*/
         inptDtH.setOnClickListener(new View.OnClickListener() {
@@ -110,19 +223,42 @@ public class EditForm extends AppCompatActivity {
 
 
 
-                if(!valida){
-                    //Toast.makeText(EditForm.this, "no valido", Toast.LENGTH_SHORT).show();
-                    //btnSave.setBackgroundColor(Color.parseColor("#ff0000"));
-                    //btnSave.getBackground().mutate().setTint(getApplicationContext().getColor(this, R.color.anyColor));
-                    //btnSave.setBackgroundTintList(getResources().getColorStateList(Color.parseColor("#ff0000"));
-//                    btnSave.setBackgroundTintList(btnSave.valueOf(ContextCompat.getColor(mContext,R.color.mColor)));
-//                    btnSave.setBackgroundTintList(btnSave, ColorStateList.valueOf());
-//                    btnSave.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.favourite_selected));
-                    //btnSave.setBackgroundTintList(btnSave, ColorStateList.valueOf(100, 80, 80, ));
-                    btnSave.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff0000")));
+                if(!ioSave){
+                    /*--------------------------------------------------------------------------------------------------------------*/
+                    int vlDtH = Integer.parseInt(inptDtH.getText().toString());
+                    int vlDtM = Integer.parseInt(inptDtM.getText().toString());
+                    int vlIvH = Integer.parseInt(inptIvH.getText().toString());
+                    int vlIvM = Integer.parseInt(inptIvM.getText().toString());
+                    int vlIvS = Integer.parseInt(inptIvS.getText().toString());
+
+                   int ano = Calendar.getInstance().get(Calendar.getInstance().YEAR);
+                   int mes = Calendar.getInstance().get(Calendar.getInstance().MONTH);
+                   int dia = Calendar.getInstance().get(Calendar.getInstance().DAY_OF_MONTH);
+
+                   nowdate.set(nowdate.YEAR,ano);
+                   nowdate.set(nowdate.MONTH,mes);
+                   nowdate.set(nowdate.DAY_OF_MONTH,dia);
+//                   if(vlDtM <= 60){
+//                       int calcm = (vlDtH*60)+vlDtM;
+//                       nowdate.set(nowdate.HOUR_OF_DAY,(calcm/60));
+//                       nowdate.set(nowdate.MINUTE,(calcm%60));
+//                   }
+//                   nowdate.set(nowdate.SECOND,0);
+
+//
+//                    Calendar.getInstance().set(calendar.DAY_OF_MONTH,d);
+//                    Calendar.getInstance().set(calendar.MONTH,m);
+//                    Calendar.getInstance().set(calendar.YEAR,y);
+//                    Calendar.getInstance().set(calendar.HOUR_OF_DAY,h);
+//                    Calendar.getInstance().set(calendar.MINUTE,m);
+//                    Calendar.getInstance().set(calendar.SECOND,0);
 
 
+                    Log.d("TAGNAME", "vlIvM "+vlIvM);
 
+                    /*--------------------------------------------------------------------------------------------------------------*/
+                    btnSave.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+                    ioSave = true;
                 }
                 else{
                     //------------------------------------------------------------------------------------------------
@@ -280,6 +416,17 @@ public class EditForm extends AppCompatActivity {
             }
         };
         runnable.run();
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 
