@@ -59,7 +59,7 @@ public class WorkManagerRecTimer extends Worker {
         while ( cnt<=diffA && trabalha){
             Log.d("TAGNAME", "doWork: was " + cnt);
             if (Calendar.getInstance().get(Calendar.SECOND) % intrv == 0) {
-                falaAlarme(" "+ Calendar.getInstance().get(Calendar.MINUTE) +" minutos e "+ Calendar.getInstance().get(Calendar.SECOND)+" segundos");
+                falaAlarme(" "+ Calendar.getInstance().get(Calendar.MINUTE) +" minutos e "+ Calendar.getInstance().get(Calendar.SECOND));
             }
             try{ Thread.sleep(1000); }
             catch (InterruptedException e){

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/boxGeral"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp"
@@ -20,11 +21,11 @@
             android:id="@+id/txtTimeRT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
             android:text="00:00:00"
             android:textAlignment="center"
             android:textColor="#01579B"
-            android:textSize="36sp"
-            android:layout_marginTop="36dp" />
+            android:textSize="36sp" />
 
         <TextView
             android:id="@+id/txtDeath"
@@ -39,8 +40,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:layout_marginTop="0dp"
+            android:orientation="horizontal"
             android:paddingHorizontal="130dp">
 
             <com.google.android.material.textfield.TextInputLayout
@@ -82,9 +83,9 @@
                     android:id="@+id/inptDtM"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed-light"
                     android:inputType="number"
                     android:selectAllOnFocus="true"
-                    android:fontFamily="sans-serif-condensed-light"
                     android:text="20"
                     android:textAlignment="center"
                     android:textSize="30sp" />
@@ -119,9 +120,9 @@
                     android:id="@+id/inptIvH"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed-light"
                     android:inputType="number"
                     android:selectAllOnFocus="true"
-                    android:fontFamily="sans-serif-condensed-light"
                     android:text="00"
                     android:textAlignment="center"
                     android:textSize="30sp" />
@@ -177,17 +178,16 @@
                     android:id="@+id/inptIvS"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed-light"
                     android:inputType="number"
                     android:selectAllOnFocus="true"
-                    android:fontFamily="sans-serif-condensed-light"
                     android:text="00"
                     android:textAlignment="center"
-                    android:textSize="30sp"
-                    />
+                    android:textSize="30sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
-        
+
 
         <TextView
             android:id="@+id/lyTTSpech"
@@ -204,8 +204,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
-            android:selectAllOnFocus="true"
-            android:layout_weight="2">
+            android:layout_weight="2"
+            android:selectAllOnFocus="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inptSpeach"
@@ -213,7 +213,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:fontFamily="sans-serif-condensed-light"
-                android:inputType="time"
+                android:selectAllOnFocus="true"
                 android:text="11:20|First Step|18:30|Second Step"
                 android:textAlignment="center"
                 android:textColor="#01579B"

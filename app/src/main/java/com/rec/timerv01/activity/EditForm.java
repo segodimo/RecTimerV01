@@ -2,6 +2,7 @@ package com.rec.timerv01.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.work.Data;
 import androidx.work.WorkInfo;
@@ -38,6 +39,8 @@ import static java.lang.Math.round;
 
 public class EditForm extends AppCompatActivity {
 
+    private ConstraintLayout boxGeral;
+
     private TextView txtTimeRT;
     private TextInputEditText inptDtH;
     private TextInputEditText inptDtM;
@@ -71,33 +74,28 @@ public class EditForm extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_form);
 
+        boxGeral = findViewById(R.id.boxGeral);
+
         inptDtH = findViewById(R.id.inptDtH);
         inptDtM = findViewById(R.id.inptDtM);
         inptIvH = findViewById(R.id.inptIvH);
         inptIvM = findViewById(R.id.inptIvM);
         inptIvS = findViewById(R.id.inptIvS);
 
-
-        txtTimeRT = findViewById(R.id.txtTimeRT);
         inptSpeach = findViewById(R.id.inptSpeach);
         switchStatus = findViewById(R.id.switchStatus);
+
+        txtTimeRT = findViewById(R.id.txtTimeRT);
         btnSave = findViewById(R.id.btnSave);
         btnStop = findViewById(R.id.btnStop);
+
+        nowdate = Calendar.getInstance();
 
         AtualizarHora();
 
         /*============================================================*/
         //AJUSTA E ARDENDONDA(5min) HORARIO PERTO DE ratio = 30min DEPOIS
-        int ratio = 30;
-        int nvHora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        int conta = (((Integer.parseInt(Integer.toString(Calendar.getInstance().get(Calendar.MINUTE))))+ratio)/5)*5;
-        if(conta >= 60){
-            inptDtH.setText(Integer.toString(nvHora + 1));
-            inptDtM.setText(Integer.toString(conta - 60));
-        }else{
-            inptDtH.setText(Integer.toString(nvHora));
-            inptDtM.setText(Integer.toString(conta));
-        }
+        ajusteDT();
         /*============================================================*/
 
         inptDtH.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(2)});
@@ -106,11 +104,7 @@ public class EditForm extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()>1){
-                    inptDtM.requestFocus();
-                }
-                Log.d("TAGNAME", "s "+s.length());
-                Log.d("TAGNAME", "s "+s);
+                if(s.length()>1) inptDtM.requestFocus();
             }
             @Override
             public void afterTextChanged(Editable s) {
@@ -124,15 +118,11 @@ public class EditForm extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()>1){
-                    inptIvH.requestFocus();
-                }
+                if(s.length()>1) inptIvH.requestFocus();
             }
             @Override
             public void afterTextChanged(Editable s) {
-                if(Integer.parseInt(s.toString()) >= 60){
-                    inptDtM.setText("00");
-                }
+                if(Integer.parseInt(s.toString()) >= 60) inptDtM.setText("00");
             }
         });
 
@@ -142,12 +132,11 @@ public class EditForm extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()>1){
-                    inptIvM.requestFocus();
-                }
+                if(s.length()>1) inptIvM.requestFocus();
             }
             @Override
-            public void afterTextChanged(Editable s) { }
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         inptIvM.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(2)});
@@ -156,15 +145,12 @@ public class EditForm extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()>1){
-                    inptIvS.requestFocus();
-                }
+                if(s.length()>1) inptIvS.requestFocus();
+
             }
             @Override
             public void afterTextChanged(Editable s) {
-                if(Integer.parseInt(s.toString()) >= 60){
-                    inptIvM.setText("00");
-                }
+                if(Integer.parseInt(s.toString()) >= 60) inptIvM.setText("00");
             }
         });
 
@@ -175,16 +161,13 @@ public class EditForm extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length()>1){
-                    //inptIvS.requestFocus();
-                    // Check if no view has focus:
-                    hideKeyboard(EditForm.this);
+                    //hideKeyboard(EditForm.this);
+                    inptSpeach.requestFocus();
                 }
             }
             @Override
             public void afterTextChanged(Editable s) {
-                if(Integer.parseInt(s.toString()) >= 60){
-                    inptIvS.setText("00");
-                }
+                if(Integer.parseInt(s.toString()) >= 60) inptIvS.setText("00");
             }
         });
 
@@ -194,16 +177,6 @@ public class EditForm extends AppCompatActivity {
         //inptDtM.setText(Integer.toString(Calendar.getInstance().get(Calendar.MINUTE)));
         //inptDtM.setText(Integer.toString(conta*7));
 
-
-        /*============================================================*/
-        inptDtH.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String h = inptDtH.getText().toString();
-                Toast.makeText(EditForm.this, "h "+h, Toast.LENGTH_SHORT).show();
-                //calendar.set(calendar.HOUR_OF_DAY,h);
-            }
-        });
 
         /*============================================================*/
 
@@ -221,46 +194,58 @@ public class EditForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                int vlDtH = Integer.parseInt(inptDtH.getText().toString());
+                int vlDtM = Integer.parseInt(inptDtM.getText().toString());
 
+                int vlIvH = Integer.parseInt(inptIvH.getText().toString());
+                int vlIvM = Integer.parseInt(inptIvM.getText().toString());
+                int vlIvS = Integer.parseInt(inptIvS.getText().toString());
+
+                int ano = Calendar.getInstance().get(Calendar.getInstance().YEAR);
+                int mes = Calendar.getInstance().get(Calendar.getInstance().MONTH);
+                int dia = Calendar.getInstance().get(Calendar.getInstance().DAY_OF_MONTH);
+
+                nowdate.set(Calendar.getInstance().YEAR,ano);
+                nowdate.set(Calendar.getInstance().MONTH,mes);
+                nowdate.set(Calendar.getInstance().DAY_OF_MONTH,dia);
+                nowdate.set(Calendar.getInstance().HOUR_OF_DAY,vlDtH);
+                nowdate.set(Calendar.getInstance().MINUTE,vlDtM);
+                nowdate.set(Calendar.getInstance().SECOND,0);
+
+                Log.d("TAGNAME", "nowdate "+nowdate.getTime());
 
                 if(!ioSave){
                     /*--------------------------------------------------------------------------------------------------------------*/
-                    int vlDtH = Integer.parseInt(inptDtH.getText().toString());
-                    int vlDtM = Integer.parseInt(inptDtM.getText().toString());
-                    int vlIvH = Integer.parseInt(inptIvH.getText().toString());
-                    int vlIvM = Integer.parseInt(inptIvM.getText().toString());
-                    int vlIvS = Integer.parseInt(inptIvS.getText().toString());
 
-                   int ano = Calendar.getInstance().get(Calendar.getInstance().YEAR);
-                   int mes = Calendar.getInstance().get(Calendar.getInstance().MONTH);
-                   int dia = Calendar.getInstance().get(Calendar.getInstance().DAY_OF_MONTH);
+                    int interval = (vlIvH*60*60*1000)+(vlIvM*60*1000)+(vlIvS*1000);
 
-                   nowdate.set(nowdate.YEAR,ano);
-                   nowdate.set(nowdate.MONTH,mes);
-                   nowdate.set(nowdate.DAY_OF_MONTH,dia);
-//                   if(vlDtM <= 60){
-//                       int calcm = (vlDtH*60)+vlDtM;
-//                       nowdate.set(nowdate.HOUR_OF_DAY,(calcm/60));
-//                       nowdate.set(nowdate.MINUTE,(calcm%60));
-//                   }
-//                   nowdate.set(nowdate.SECOND,0);
+                    int diffMax = (int) (long) (nowdate.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
+                    if(diffMax <= 0){
+                        ajusteDT();
+                        Toast.makeText(EditForm.this, "Death Timer < Time Atual", Toast.LENGTH_SHORT).show();
+                    }else{
+                        if(interval < diffMax){
+                            btnSave.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+                            ioSave = true;
+                        }else{
+                            int diffTime = diffMax-30000;
+                            /*Log.d("TAGNAME", "diffTime "+diffTime);*/
+//                        inptIvH.setText(timNum(Integer.toString(((diffTime/1000)/60)/60)));
+//                        inptIvM.setText(timNum(Integer.toString((diffTime/1000)/60)));
+//                        inptIvS.setText(timNum(Integer.toString((diffTime/1000)%60)));
 
-//
-//                    Calendar.getInstance().set(calendar.DAY_OF_MONTH,d);
-//                    Calendar.getInstance().set(calendar.MONTH,m);
-//                    Calendar.getInstance().set(calendar.YEAR,y);
-//                    Calendar.getInstance().set(calendar.HOUR_OF_DAY,h);
-//                    Calendar.getInstance().set(calendar.MINUTE,m);
-//                    Calendar.getInstance().set(calendar.SECOND,0);
+                            inptIvH.setText("00");
+                            inptIvM.setText("01");
+                            inptIvS.setText("00");
 
-
-                    Log.d("TAGNAME", "vlIvM "+vlIvM);
-
-                    /*--------------------------------------------------------------------------------------------------------------*/
-                    btnSave.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
-                    ioSave = true;
+                            Toast.makeText(EditForm.this, "Intervalo > (Death Timer + Time Atual)", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
                 else{
+                    //------------------------------------------------------------------------------------------------
+                    Intervalo = (vlIvH*60*60*1000)+(vlIvM*60*1000)+(vlIvS);
+                    int diffA = (int) (long) (nowdate.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
                     //------------------------------------------------------------------------------------------------
 //                if(calendari != null){
 //                    Log.d("TAGNAME", String.valueOf(Calendar.getInstance().getTime())+" (ddai) "+Calendar.getInstance().getTimeInMillis());
@@ -282,14 +267,15 @@ public class EditForm extends AppCompatActivity {
                     //------------------------------------------------------------------------------------------------
 
 
-                    Intervalo = 5; // em Segundos
-                    AlertTimei = 3000; // em ms
-                    AlertTimef = 60000; // em ms
+                    //Intervalo = 5; // em Segundos
+                    //AlertTimei = 1000; // em ms tempo de espera para começar
+                    //AlertTimef = 60000; // em ms temo que demora o trabalho = death timer
 
                     Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
                     Log.d("TAGNAME", "AlertTimef "+String.valueOf(AlertTimef / 1000));
 
-                    salvarAlarme("tag1", AlertTimei, "titititi", "fala teste", (AlertTimef-AlertTimei), Intervalo);
+                    //salvarAlarme("tag1", AlertTimei, "titititi", "fala teste", (AlertTimef-AlertTimei), Intervalo);
+                    salvarAlarme("tag1", AlertTimei, "titititi", "fala teste", diffA, Intervalo);
 
 //                if(calendarf != null && calendari != null && AlertTimef > AlertTimei){
 //                    //salvarAlarme("tag1", AlertTimei, "titititi", String.valueOf(hh+" horas"+mm+" minutos "+ss+" segundos"), 1);
@@ -311,7 +297,29 @@ public class EditForm extends AppCompatActivity {
         });
 
 
+
+        boxGeral.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideKeyboard(EditForm.this);
+            }
+        });
+
+
     }//FINAL DO ONCREATE
+
+    private void ajusteDT() {
+        int ratio = 30;
+        int nvHora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int conta = (((Integer.parseInt(Integer.toString(Calendar.getInstance().get(Calendar.MINUTE))))+ratio)/5)*5;
+        if(conta >= 60){
+            inptDtH.setText(timNum(Integer.toString(nvHora + 1)));
+            inptDtM.setText(timNum(Integer.toString(conta - 60)));
+        }else{
+            inptDtH.setText(timNum(Integer.toString(nvHora)));
+            inptDtM.setText(timNum(Integer.toString(conta)));
+        }
+    }
 
     private void salvarAlarme(String tag, int alertTime, String tit, String txt, int diffA, int intrv) {
         /*============================================================*/
@@ -428,6 +436,13 @@ public class EditForm extends AppCompatActivity {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    public String timNum(String txtnum){
+        if(txtnum.length() == 1 ) return "0"+txtnum;
+        else return txtnum;
+    }
+
+
 
 
 }
