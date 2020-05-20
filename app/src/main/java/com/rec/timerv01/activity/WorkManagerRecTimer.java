@@ -50,16 +50,16 @@ public class WorkManagerRecTimer extends Worker {
         Log.d("TAGNAME", "INICIANDO DOWORK");
         // ------------------------------------------------------------------------------------------
         // RECEIVE DADOS DO EDITFORM
-        String titulo = getInputData().getString("titulo");
-        String detalhe = getInputData().getString("detalle");
+        String tit = getInputData().getString("tit");
+        String txt = getInputData().getString("txt");
         int diffA = getInputData().getInt("diffA", 0);
         int intrv = getInputData().getInt("intrv", 0);
         Log.d("TAGNAME", "diffA " + diffA);
         // ------------------------------------------------------------------------------------------
-        while ( cnt<=diffA && trabalha){
-            Log.d("TAGNAME", "doWork: was " + cnt);
+        while ( cnt < diffA && trabalha){
+            Log.d("TAGNAME", "doWork trabalhando :  " + cnt +" de "+ diffA);
             if (Calendar.getInstance().get(Calendar.SECOND) % intrv == 0) {
-                falaAlarme(" "+ Calendar.getInstance().get(Calendar.MINUTE) +" minutos e "+ Calendar.getInstance().get(Calendar.SECOND));
+                falaAlarme(txt+" "+ Calendar.getInstance().get(Calendar.MINUTE) +" minutos e "+ Calendar.getInstance().get(Calendar.SECOND));
             }
             try{ Thread.sleep(1000); }
             catch (InterruptedException e){
@@ -68,6 +68,7 @@ public class WorkManagerRecTimer extends Worker {
             }
             cnt++;
         }
+        // ------------------------------------------------------------------------------------------
         // ------------------------------------------------------------------------------------------
         // SEND DADOS PRO EDITFORM
         Data data1 = new Data.Builder()
