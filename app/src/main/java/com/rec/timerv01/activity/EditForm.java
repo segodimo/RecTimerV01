@@ -153,7 +153,7 @@ public class EditForm extends AppCompatActivity {
                         String ttsfala = Objects.requireNonNull(inptSpeach.getText()).toString();
                         //------------------------------------------------------------------------------------------------
                         //Intervalo = 5; // em Segundos
-                        AlertTimei = 1000; // em ms tempo de espera para começar
+                        AlertTimei = 5000; // em ms tempo de espera para começar
                         //AlertTimef = 60000; // em ms temo que demora o trabalho = death timer
 
                         Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));

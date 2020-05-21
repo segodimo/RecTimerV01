@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".activity.AlarmService" />
         <activity android:name=".activity.EditForm"></activity>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
@@ -19,6 +20,7 @@
         </activity>
         <service android:name=".activity.FalaTTSstop" />
         <service android:name=".activity.FalaTTS" />
+
     </application>
 
 </manifest>
