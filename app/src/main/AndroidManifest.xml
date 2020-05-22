@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.rec.timerv01">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".activity.AlarmService" />
+
         <activity android:name=".activity.EditForm"></activity>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
@@ -19,8 +21,11 @@
             </intent-filter>
         </activity>
         <service android:name=".activity.FalaTTSstop" />
-        <service android:name=".activity.FalaTTS" />
-
+        <service android:name=".activity.FalaTTS"
+            android:enabled="true"/>
+        <receiver android:name=".activity.AlarmReceiver" />
+        <service android:name=".activity.AlarmService"
+            android:enabled="true" />
     </application>
 
 </manifest>

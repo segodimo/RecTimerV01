@@ -10,6 +10,8 @@ import androidx.work.WorkManager;
 import androidx.work.OneTimeWorkRequest;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.media.AudioManager;
@@ -69,6 +71,8 @@ public class EditForm extends AppCompatActivity {
 
     private Boolean ioSave = false;
 
+    private AlarmManager alarmmanager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +95,8 @@ public class EditForm extends AppCompatActivity {
         btnStop = findViewById(R.id.btnStop);
 
         nowdate = Calendar.getInstance();
+
+        alarmmanager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         AtualizarHora();
 
@@ -152,7 +158,7 @@ public class EditForm extends AppCompatActivity {
                         // android:text="11:20|First Step|18:30|Second Step"
                         String ttsfala = Objects.requireNonNull(inptSpeach.getText()).toString();
                         //------------------------------------------------------------------------------------------------
-                        //Intervalo = 5; // em Segundos
+                        diffA = 20000; // em Segundos
                         AlertTimei = 5000; // em ms tempo de espera para começar
                         //AlertTimef = 60000; // em ms temo que demora o trabalho = death timer
 
@@ -161,6 +167,12 @@ public class EditForm extends AppCompatActivity {
 
                         //salvarAlarme("tag1", AlertTimei, "titititi", "fala teste", (AlertTimef-AlertTimei), Intervalo);
                         salvarAlarme("tag1", AlertTimei, "titititi", ttsfala, diffA/1000, Intervalo);
+                        //------------------------------------------------------------------------------------------------
+
+//                        Intent intentAR = new Intent(getApplicationContext(), AlarmReceiver.class);
+//                        PendingIntent pendIngintentAR = PendingIntent.getBroadcast(getApplicationContext(), 0, intentAR, PendingIntent.FLAG_UPDATE_CURRENT);
+//                        //PendingIntent pendIngintentAR = PendingIntent.getBroadcast(getApplicationContext(), 0, intentAR, 0);
+//                        alarmmanager.set(AlarmManager.RTC_WAKEUP, nowdate.getTimeInMillis(), pendIngintentAR);
                         //------------------------------------------------------------------------------------------------
                     }else{
 //                        int diffTime = diffMax-30000;

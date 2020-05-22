@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -61,18 +62,25 @@ public class WorkManagerRecTimer extends Worker {
         int intrv = getInputData().getInt("intrv", 0);
         Log.d("TAGNAME", "diffA " + diffA);
         // ------------------------------------------------------------------------------------------
-//        while ( cnt < diffA && trabalha){
-//            Log.d("TAGNAME", "doWork trabalhando :  " + cnt +" de "+ diffA);
-//            if (Calendar.getInstance().get(Calendar.SECOND) % intrv == 0) {
-//                falaAlarme(txt+" "+ Calendar.getInstance().get(Calendar.MINUTE) +" minutos e "+ Calendar.getInstance().get(Calendar.SECOND));
-//            }
-//            try{ Thread.sleep(1000); }
-//            catch (InterruptedException e){
-//                e.printStackTrace();
-//                return  Result.failure();
-//            }
-//            cnt++;
-//        }
+        Intent intentAlarm = new Intent(getApplicationContext(), AlarmService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ContextCompat.startForegroundService(getApplicationContext(), intentAlarm);
+        } else {
+            getApplicationContext().startService(intentAlarm);
+        }
+        // ------------------------------------------------------------------------------------------
+        while ( cnt < diffA && trabalha){
+            Log.d("TAGNAME", "doWork trabalhando :  " + cnt +" de "+ diffA);
+            if (Calendar.getInstance().get(Calendar.SECOND) % intrv == 0) {
+                falaAlarme(txt+" "+ Calendar.getInstance().get(Calendar.MINUTE) +" minutos e "+ Calendar.getInstance().get(Calendar.SECOND));
+            }
+            try{ Thread.sleep(1000); }
+            catch (InterruptedException e){
+                e.printStackTrace();
+                return  Result.failure();
+            }
+            cnt++;
+        }
         // ------------------------------------------------------------------------------------------
 //        intent = new Intent(getApplicationContext(), FalaTTS.class);
 //        intent.putExtra("FALATXT", "teste 5, 6, 7");
@@ -86,11 +94,18 @@ public class WorkManagerRecTimer extends Worker {
                 .putString(RECEIVE_DADO, "Recevendo Dado Teste")
                 .build();
         // ------------------------------------------------------------------------------------------
-        displayNotification("TITULO", "txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt", "xoxoxo");
+        //displayNotification("TITULO", "txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt txtxtxtxtxxtxtxtxt", "xoxoxo");
         //falaAlarme("Taimer Finalizado");
+
+
 
 //        Intent intentAlarm = new Intent(getApplicationContext(), AlarmService.class);
 //        getApplicationContext().startService(intentAlarm);
+
+//        Intent intentAR = new Intent(this.getApplicationContext(), AlarmReceiver.class);
+//        //PendingIntent pendIngintentAR = PendingIntent.getBroadcast(getApplicationContext(), 0, intentAR, PendingIntent.FLAG_UPDATE_CURRENT);
+//        PendingIntent pendIngintentAR = PendingIntent.getBroadcast(getApplicationContext(), 0, intentAR, 0);
+
 
         return Result.success(data1);
         // ------------------------------------------------------------------------------------------
@@ -108,7 +123,15 @@ public class WorkManagerRecTimer extends Worker {
 
         intent = new Intent(getApplicationContext(), FalaTTS.class);
         intent.putExtra("FALATXT", falatxt);
-        getApplicationContext().startService(intent);
+//        getApplicationContext().startService(intent);
+        //Intent intentService = new Intent(getApplicationContext(), FalaTTS.class);
+        // Valida a versão do Android. A partir do 8, usar startForegroundService.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ContextCompat.startForegroundService(getApplicationContext(), intent);
+        } else {
+            getApplicationContext().startService(intent);
+        }
+
     }
 
     private void displayNotification(String tit, String txt, String detalhe) {
@@ -128,7 +151,7 @@ public class WorkManagerRecTimer extends Worker {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), noichannelid)
-                //.setAutoCancel(true)
+                .setAutoCancel(true)
                 .setContentTitle(tit)
                 .setContentText(txt)
                 .setSmallIcon(R.mipmap.ic_launcher)
