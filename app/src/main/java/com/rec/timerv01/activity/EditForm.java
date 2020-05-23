@@ -239,7 +239,12 @@ public class EditForm extends AppCompatActivity {
                 //.setInitialDelay(5000, TimeUnit.MILLISECONDS)
                 .addTag(tag)
                 .build();
-        WorkManager.getInstance(getApplicationContext()).enqueue(workRequest);
+
+        try {
+            WorkManager.getInstance(getApplicationContext()).enqueue(workRequest);
+        }catch (Exception e){
+            Log.d("TAGNAME", String.valueOf(e));
+        }
         /*============================================================*/
         UnMuteAudio();
         Toast.makeText(EditForm.this, "Alarma Guardada", Toast.LENGTH_SHORT).show();

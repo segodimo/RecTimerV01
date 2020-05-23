@@ -62,7 +62,7 @@ public class WorkManagerRecTimer extends Worker {
         int intrv = getInputData().getInt("intrv", 0);
         Log.d("TAGNAME", "diffA " + diffA);
         // ------------------------------------------------------------------------------------------
-        Intent intentAlarm = new Intent(getApplicationContext(), AlarmService.class);
+        Intent intentAlarm = new Intent(getApplicationContext(), FalaTTSstop.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ContextCompat.startForegroundService(getApplicationContext(), intentAlarm);
         } else {
