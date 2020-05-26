@@ -14,47 +14,39 @@ import androidx.annotation.Nullable;
 
 import java.util.Locale;
 
-public class FalaTTS extends Service {
+public class FalaTTS extends Service implements TextToSpeech.OnInitListener {
+   public FalaTTS() {
+   }
 
-    private TextToSpeech txtfala;
+   public static TextToSpeech mTts;
 
+   @Override
+   public IBinder onBind(Intent intent) {
+       return null;
+   }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+   public void onStart(Intent intent, int startId) {
+       // TODO Auto-generated method stub
+       //mPreferences = getSharedPreferences(Mysettings.PREF_NAME, Service.MODE_PRIVATE);
 
-        txtfala = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) txtfala.setLanguage(Locale.getDefault());
-            }
-        });
+       //pit = Float.parseFloat(mPreferences.getString("pit","0.8"));
+       //rate = Float.parseFloat(mPreferences.getString("rate","1.1"));
+       mTts = new TextToSpeech(this, this);
+       super.onStart(intent, startId);
+   }
 
+public void onInit(int status) {
+    // TODO Auto-generated method stub
+    if (status == TextToSpeech.SUCCESS) {
+        if (mTts.isLanguageAvailable(Locale.getDefault()) >= 0)
+
+        //Toast.makeText( FalaTTS.this, "Sucessfull intialization of Text-To-Speech engine FalaTTS ", Toast.LENGTH_LONG).show();
+        mTts.setLanguage(Locale.getDefault());
+
+        //mTts.setPitch(pit);
+        //mTts.setSpeechRate(rate);
+
+    } else if (status == TextToSpeech.ERROR) {
+//        Toast.makeText(FalaTTS.this, "Unable to initialize Text-To-Speech engine", Toast.LENGTH_LONG).show();
     }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        String falatxt = intent.getStringExtra("FALATXT");
-        //String toSpeak = "Testando fala, 1, 2, 3, 4";
-        txtfala.speak(falatxt, TextToSpeech.QUEUE_FLUSH, null);
-        return START_STICKY;
-        // return START_NOT_STICKY;
-        //return START_REDELIVER_INTENT;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-
-
-
-}
+}}

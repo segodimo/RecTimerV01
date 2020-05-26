@@ -20,12 +20,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service android:name=".activity.FalaTTSstop" />
+
         <service android:name=".activity.FalaTTS"
             android:enabled="true"/>
-        <receiver android:name=".activity.AlarmReceiver" />
+
         <service android:name=".activity.AlarmService"
-            android:enabled="true" />
+            android:enabled="true"/>
+
     </application>
 
 </manifest>

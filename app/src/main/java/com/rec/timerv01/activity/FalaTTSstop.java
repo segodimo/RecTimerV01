@@ -24,6 +24,7 @@ public class FalaTTSstop extends Service implements TextToSpeech.OnInitListener,
     @Override
     public void onInit(int status) {
         Log.d("TAGNAME", "Pasou por aqui 2!!");
+
         if (status == TextToSpeech.SUCCESS) {
             int result = mTts.setLanguage(Locale.getDefault());
             if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
