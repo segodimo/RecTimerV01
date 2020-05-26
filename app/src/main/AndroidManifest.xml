@@ -29,6 +29,8 @@
         <service android:name=".activity.AlarmService"
             android:enabled="true"/>
 
+        <receiver android:name=".activity.RecBroadcastReceiver"/>
+
     </application>
 
 </manifest>

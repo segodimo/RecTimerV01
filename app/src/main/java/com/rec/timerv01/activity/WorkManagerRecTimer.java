@@ -56,7 +56,7 @@ public class WorkManagerRecTimer extends Worker {
         Log.d("TAGNAME", ">>> diffA " + diffA);
         // ------------------------------------------------------------------------------------------
         // ------------------------------------------------------------------------------------------
-        serRecAlamServ("TITULO", "txtxtxtx txxtxtxtxt txtxtxtx txxtxtxtxt txtxtx txtxxtxtxtxt", "xoxoxo");
+        setRecAlamServ("TITULO", "txtxtxtx txxtxtxtxt txtxtxtx txxtxtxtxt txtxtx txtxxtxtxtxt", "xoxoxo");
         //falaAlarme("txtxttxx");
         while ( cnt < diffA && trabalha){
             Log.d("TAGNAME", ">>> doWork trabalhando :  " + cnt +" de "+ diffA);
@@ -79,7 +79,7 @@ public class WorkManagerRecTimer extends Worker {
         // ------------------------------------------------------------------------------------------
     }
 
-    private void serRecAlamServ(String tit, String txt, String detalhe) {
+    private void setRecAlamServ(String tit, String txt, String detalhe) {
         Intent intentService = new Intent(getApplicationContext(), AlarmService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ContextCompat.startForegroundService(getApplicationContext(), intentService);

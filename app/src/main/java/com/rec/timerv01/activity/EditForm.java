@@ -158,8 +158,8 @@ public class EditForm extends AppCompatActivity {
                         // android:text="11:20|First Step|18:30|Second Step"
                         String ttsfala = Objects.requireNonNull(inptSpeach.getText()).toString();
                         //------------------------------------------------------------------------------------------------
-                        diffA = 15000; // em Segundos
-                        AlertTimei = 5000; // em ms tempo de espera para começar
+                        diffA = 5000; // em Segundos
+                        AlertTimei = 3000; // em ms tempo de espera para começar
                         //AlertTimef = 60000; // em ms temo que demora o trabalho = death timer
 
                         Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
@@ -189,8 +189,8 @@ public class EditForm extends AppCompatActivity {
                 WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("tag1");
                 Toast.makeText(EditForm.this, "Alarma Eliminada", Toast.LENGTH_SHORT).show();
                 //-----------------------------------------------------------------------------------
-                Intent intentAlarm = new Intent(getApplicationContext(), AlarmService.class);
-                stopService(intentAlarm);
+                //Intent intentAlarm = new Intent(getApplicationContext(), AlarmService.class);
+                //stopService(intentAlarm);
             }
         });
 

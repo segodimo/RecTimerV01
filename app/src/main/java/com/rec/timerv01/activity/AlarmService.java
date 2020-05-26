@@ -69,12 +69,24 @@ public class AlarmService extends Service implements TextToSpeech.OnInitListener
             Intent notificationIntent = new Intent(this, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
+
+            Intent intent_rbr = new Intent(this, RecBroadcastReceiver.class);
+            //Intent snoozeIntent = new Intent(this, MyBroadcastReceiver.class);
+            //intent_rbr.setAction(ACTION_SNOOZE);
+            //intent_rbr.putExtra(EXTRA_NOTIFICATION_ID, 0);
+            intent_rbr.putExtra("extra", "ASASAS");
+            PendingIntent intent_rbrPendingIntent = PendingIntent.getBroadcast(this, 0, intent_rbr, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID )
                     .setContentTitle("My Alarm clock")
                     //.setContentText("Alarm time - " + alarmHour.toString() + " : " + alarmMinute.toString())
                     .setContentText("OKOKOK")
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setContentIntent(pendingIntent)
+                    .setSound(null)
+                    .setAutoCancel(true)
+                    .addAction(R.drawable.ic_launcher_foreground, "PARAR", intent_rbrPendingIntent)
                     .build();
 
             startForeground(1, notification);
