@@ -73,6 +73,9 @@ public class EditForm extends AppCompatActivity {
 
     private AlarmManager alarmmanager;
 
+    private String state = "true";
+    private String tag = "tag1";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,15 +161,15 @@ public class EditForm extends AppCompatActivity {
                         // android:text="11:20|First Step|18:30|Second Step"
                         String ttsfala = Objects.requireNonNull(inptSpeach.getText()).toString();
                         //------------------------------------------------------------------------------------------------
-                        diffA = 5000; // em Segundos
-                        AlertTimei = 3000; // em ms tempo de espera para começar
+                        diffA = 20000; // em Segundos
+                        AlertTimei = 5000; // em ms tempo de espera para começar
                         //AlertTimef = 60000; // em ms temo que demora o trabalho = death timer
 
                         Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
                         Log.d("TAGNAME", "AlertTimef "+String.valueOf(AlertTimef / 1000));
 
                         //salvarAlarme("tag1", AlertTimei, "titititi", "fala teste", (AlertTimef-AlertTimei), Intervalo);
-                        salvarAlarme("tag1", AlertTimei, "titititi", ttsfala, diffA/1000, Intervalo);
+                        salvarAlarme(tag, AlertTimei, "titititi", ttsfala, diffA/1000, Intervalo);
                         //------------------------------------------------------------------------------------------------
                     }else{
 //                        int diffTime = diffMax-30000;
@@ -186,11 +189,10 @@ public class EditForm extends AppCompatActivity {
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("tag1");
-                Toast.makeText(EditForm.this, "Alarma Eliminada", Toast.LENGTH_SHORT).show();
-                //-----------------------------------------------------------------------------------
-                //Intent intentAlarm = new Intent(getApplicationContext(), AlarmService.class);
-                //stopService(intentAlarm);
+                Intent intentBC = new Intent(getApplicationContext(), RecBroadcastReceiver.class);
+                intentBC.putExtra("tag", tag);
+                intentBC.putExtra("state", "false");
+                sendBroadcast(intentBC);
             }
         });
 
@@ -221,23 +223,18 @@ public class EditForm extends AppCompatActivity {
     }
 
     private void salvarAlarme(String tag, int alertTime, String tit, String txt, int diffA, int intrv) {
-        /*============================================================*/
-        // SEND DADOS PRO WORKMANAGER
-        Data data = new Data.Builder()
-                .putString("tit",tit)
-                .putString("txt",txt)
-                .putInt("diffA", diffA)
-                .putInt("intrv", intrv)
-                .build();
-        /*============================================================*/
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
-                .setInputData(data)
-                .setInitialDelay(alertTime, TimeUnit.MILLISECONDS)
-                //.setInitialDelay(5000, TimeUnit.MILLISECONDS)
-                .addTag(tag)
-                .build();
 
-        WorkManager.getInstance(getApplicationContext()).enqueue(workRequest);
+        /*============================================================*/
+        Intent intentBC = new Intent(this, RecBroadcastReceiver.class);
+        intentBC.putExtra("alertTime", alertTime);
+        intentBC.putExtra("tag", tag);
+        intentBC.putExtra("tit", tit);
+        intentBC.putExtra("txt", txt);
+        intentBC.putExtra("diffA", diffA);
+        intentBC.putExtra("intrv", intrv);
+        intentBC.putExtra("state", state);
+
+        sendBroadcast(intentBC);
         /*============================================================*/
         UnMuteAudio();
         Toast.makeText(EditForm.this, "Alarma Guardada", Toast.LENGTH_SHORT).show();
@@ -246,21 +243,7 @@ public class EditForm extends AppCompatActivity {
         // intent.putExtra("FALATXT", "");
         // getApplicationContext().startService(intent);
         /*=============================================================*/
-        // RECEIVE DADOS DO WORKMANAGER
-        WorkManager.getInstance(EditForm.this).getWorkInfoByIdLiveData(workRequest.getId()).observe(EditForm.this, new Observer<WorkInfo>() {
-            @Override
-            public void onChanged(@Nullable WorkInfo workInfo) {
-                if(workInfo  != null ){
-                    if(workInfo.getState().isFinished()){
-                        Data data = workInfo.getOutputData();
-                        String outputdata = data.getString(WorkManagerRecTimer.RECEIVE_DADO);
-                        Log.d("TAGNAME", "FINALISOU DOWORK");
-                        //Toast.makeText(EditForm.this, "Chegou!! "+outputdata, Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        });
-        /*=============================================================*/
+
     }
 
 

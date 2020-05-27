@@ -105,5 +105,8 @@ public class WorkManagerRecTimer extends Worker {
         super.onStopped();
         Log.d("TAGNAME", ">>> WorkManagerRecTimer onStopped ");
         trabalha = false;
+
+        Intent intentService = new Intent(getApplicationContext(), AlarmService.class);
+        getApplicationContext().stopService(intentService);
     }
 }

@@ -74,7 +74,8 @@ public class AlarmService extends Service implements TextToSpeech.OnInitListener
             //Intent snoozeIntent = new Intent(this, MyBroadcastReceiver.class);
             //intent_rbr.setAction(ACTION_SNOOZE);
             //intent_rbr.putExtra(EXTRA_NOTIFICATION_ID, 0);
-            intent_rbr.putExtra("extra", "ASASAS");
+            intent_rbr.putExtra("state", "false");
+            intent_rbr.putExtra("tag", "tag1");
             PendingIntent intent_rbrPendingIntent = PendingIntent.getBroadcast(this, 0, intent_rbr, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
@@ -86,7 +87,7 @@ public class AlarmService extends Service implements TextToSpeech.OnInitListener
                     .setContentIntent(pendingIntent)
                     .setSound(null)
                     .setAutoCancel(true)
-                    .addAction(R.drawable.ic_launcher_foreground, "PARAR", intent_rbrPendingIntent)
+                    .addAction(R.drawable.ic_launcher_foreground, "Parar", intent_rbrPendingIntent)
                     .build();
 
             startForeground(1, notification);
