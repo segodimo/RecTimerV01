@@ -31,13 +31,13 @@ public class AlarmService extends Service implements TextToSpeech.OnInitListener
     private Timer t = new Timer();
     private TextToSpeech mTts;
 
+    private String falTTS = "Testando fala, 1, 2, 3";
 
     private static final String CHANNEL_ID = "MyNotificationChannelID";
 
     @Override
     public void onCreate() {
         mTts = new TextToSpeech(this, this);
-        // This is a good place to set spokenText
     }
 
     @Override
@@ -47,19 +47,20 @@ public class AlarmService extends Service implements TextToSpeech.OnInitListener
             int result = mTts.setLanguage(Locale.getDefault());
             if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
                 //mTts.speak(spokenText, TextToSpeech.QUEUE_FLUSH, null);
-                mTts.speak("Testando fala, 1, 2, 3", TextToSpeech.QUEUE_FLUSH, null);
+                mTts.speak(falTTS, TextToSpeech.QUEUE_FLUSH, null);
             }
         }
     }
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    public IBinder onBind(Intent intent) { return null; }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        falTTS = intent.getExtras().getString("falTTS");
+
         //alarmHour = intent.getIntExtra("alarmHour", 0);
         //alarmMinute = intent.getIntExtra("alarmMinute", 0);
 

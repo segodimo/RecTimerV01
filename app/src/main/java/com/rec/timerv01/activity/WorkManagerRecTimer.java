@@ -56,10 +56,20 @@ public class WorkManagerRecTimer extends Worker {
         Log.d("TAGNAME", ">>> diffA " + diffA);
         // ------------------------------------------------------------------------------------------
         // ------------------------------------------------------------------------------------------
-        setRecAlamServ("TITULO", "txtxtxtx txxtxtxtxt txtxtxtx txxtxtxtxt txtxtx txtxxtxtxtxt", "xoxoxo");
+        setRecAlamServ("TITULO", "tit", "txt");
         //falaAlarme("txtxttxx");
         while ( cnt < diffA && trabalha){
             Log.d("TAGNAME", ">>> doWork trabalhando :  " + cnt +" de "+ diffA);
+
+            //if (Calendar.getInstance().get(Calendar.SECOND) % intrv == 0) {
+            if (Calendar.getInstance().get(Calendar.SECOND) % 3 == 0) {
+                //String falTTS = (" "+ Calendar.getInstance().get(Calendar.MINUTE) +" minutos e "+ Calendar.getInstance().get(Calendar.SECOND));
+                //setRecAlamServ(falTTS, tit, txt);
+                setRecAlamServ("TITULO", "tit", "txt");
+            }
+//            if (Calendar.getInstance().get(Calendar.SECOND) % 8 == 0) {
+//                stopRecAlamServ();
+//            }
 
             try{ Thread.sleep(1000); }
             catch (InterruptedException e){
@@ -79,8 +89,10 @@ public class WorkManagerRecTimer extends Worker {
         // ------------------------------------------------------------------------------------------
     }
 
-    private void setRecAlamServ(String tit, String txt, String detalhe) {
-        Intent intentService = new Intent(getApplicationContext(), AlarmService.class);
+    private void setRecAlamServ(String falTTS, String tit, String txt) {
+        //Intent intentService = new Intent(getApplicationContext(), AlarmService.class);
+        Intent intentService = new Intent(getApplicationContext(), FalaTTS.class);
+        intentService.putExtra("falTTS", falTTS);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ContextCompat.startForegroundService(getApplicationContext(), intentService);
         } else {
@@ -88,16 +100,10 @@ public class WorkManagerRecTimer extends Worker {
         }
     }
 
-    private  void falaAlarme(String falatxt){
-        FalaTTS.mTts.speak("Text to be spoken", TextToSpeech.QUEUE_FLUSH,null);
-//        Intent intentService = new Intent(getApplicationContext(), FalaTTS.class);
-//        // Valida a versão do Android. A partir do 8, usar startForegroundService.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            ContextCompat.startForegroundService(getApplicationContext(), intentService);
-//        } else {
-//            getApplicationContext().startService(intentService);
-//        }
-
+    private void stopRecAlamServ(){
+        //Intent intentService = new Intent(getApplicationContext(), AlarmService.class);
+        Intent intentService = new Intent(getApplicationContext(), FalaTTS.class);
+        getApplicationContext().stopService(intentService);
     }
 
     @Override
@@ -106,7 +112,9 @@ public class WorkManagerRecTimer extends Worker {
         Log.d("TAGNAME", ">>> WorkManagerRecTimer onStopped ");
         trabalha = false;
 
-        Intent intentService = new Intent(getApplicationContext(), AlarmService.class);
+        //Intent intentService = new Intent(getApplicationContext(), AlarmService.class);
+        Intent intentService = new Intent(getApplicationContext(), FalaTTS.class);
         getApplicationContext().stopService(intentService);
+
     }
 }
