@@ -56,12 +56,12 @@ public class FalaTTS extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        //falTTS = intent.getExtras().getString("falTTS");
+        falTTS = intent.getExtras().getString("falTTS");
 
         //alarmHour = intent.getIntExtra("alarmHour", 0);
         //alarmMinute = intent.getIntExtra("alarmMinute", 0);
 
-        ringtone = RingtoneManager.getRingtone(getApplicationContext(), RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
+        //ringtone = RingtoneManager.getRingtone(getApplicationContext(), RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
 
         try {
             Intent notificationIntent = new Intent(this, MainActivity.class);
