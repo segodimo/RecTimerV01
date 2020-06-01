@@ -161,8 +161,8 @@ public class EditForm extends AppCompatActivity {
                         // android:text="11:20|First Step|18:30|Second Step"
                         String ttsfala = Objects.requireNonNull(inptSpeach.getText()).toString();
                         //------------------------------------------------------------------------------------------------
-                        Intervalo = 5;
-                        diffA = 20000; // em Segundos
+                        Intervalo = 10;
+                        diffA = 30000; // em Segundos
                         AlertTimei = 5000; // em ms tempo de espera para começar
                         //AlertTimef = 60000; // em ms temo que demora o trabalho = death timer
 

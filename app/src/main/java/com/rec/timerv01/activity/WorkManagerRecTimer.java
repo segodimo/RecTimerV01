@@ -56,8 +56,7 @@ public class WorkManagerRecTimer extends Worker {
         Log.d("TAGNAME", ">>> diffA " + diffA);
         // ------------------------------------------------------------------------------------------
         // ------------------------------------------------------------------------------------------
-        //setRecAlamServ("TITULO", "tit", "txt");
-        //falaAlarme("txtxttxx");
+        setRecAlamServ("Taimer iniciado", "tit", "txt");
         while ( cnt < diffA && trabalha){
             Log.d("TAGNAME", ">>> doWork trabalhando :  " + cnt +" de "+ diffA);
 
@@ -67,9 +66,9 @@ public class WorkManagerRecTimer extends Worker {
                 setRecAlamServ(falTTS, tit, txt);
                 //setRecAlamServ("TITULO", "tit", "txt");
             }
-//            if (Calendar.getInstance().get(Calendar.SECOND) % 8 == 0) {
-//                stopRecAlamServ();
-//            }
+            if (Calendar.getInstance().get(Calendar.SECOND) % (intrv+3) == 0) {
+                stopRecAlamServ();
+            }
 
             try{ Thread.sleep(1000); }
             catch (InterruptedException e){
@@ -81,6 +80,12 @@ public class WorkManagerRecTimer extends Worker {
         // ------------------------------------------------------------------------------------------
         //falaAlarme("Taimer Finalizado");
         // ------------------------------------------------------------------------------------------
+        setRecAlamServ("Taimer Finalizado", "tit", "txt");
+        try{ Thread.sleep(3000); }
+        catch (InterruptedException e){
+            e.printStackTrace();
+            return  Result.failure();
+        }
         onStopped();
         // SEND DADOS PRO EDITFORM
         Data data1 = new Data.Builder()

@@ -44,6 +44,9 @@ public class FalaTTS extends Service {
             public void onInit(int status) {
                 if (status == TextToSpeech.SUCCESS) {
                     result = mTts.setLanguage(Locale.getDefault());
+                    if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+                        mTts.speak(falTTS, TextToSpeech.QUEUE_FLUSH, null);
+                    }
                 }
             }
         });
