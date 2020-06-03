@@ -26,7 +26,6 @@ public class RecBroadcastReceiver extends BroadcastReceiver {
         /*============================================================*/
         int alertTime = intent.getExtras().getInt("alertTime");
         String tag = intent.getExtras().getString("tag");
-        String tit = intent.getExtras().getString("tit");
         String txt = intent.getExtras().getString("txt");
         int diffA = intent.getExtras().getInt("diffA");
         int intrv = intent.getExtras().getInt("intrv");
@@ -35,7 +34,6 @@ public class RecBroadcastReceiver extends BroadcastReceiver {
         /*============================================================*/
         // SEND DADOS PRO WORKMANAGER
         Data data = new Data.Builder()
-                .putString("tit",tit)
                 .putString("txt",txt)
                 .putInt("diffA", diffA)
                 .putInt("intrv", intrv)
@@ -44,7 +42,7 @@ public class RecBroadcastReceiver extends BroadcastReceiver {
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerRecTimer.class)
                 .setInputData(data)
                 .setInitialDelay(alertTime, TimeUnit.MILLISECONDS)
-                //.setInitialDelay(5000, TimeUnit.MILLISECONDS)
+                //.setInitialDelay(0, TimeUnit.MILLISECONDS)
                 .addTag(tag)
                 .build();
 

@@ -49,24 +49,30 @@ public class WorkManagerRecTimer extends Worker {
         Log.d("TAGNAME", ">>> INICIANDO DOWORK");
         // ------------------------------------------------------------------------------------------
         // RECEIVE DADOS DO EDITFORM
-        String tit = getInputData().getString("tit");
         String txt = getInputData().getString("txt");
+        /*+++++++++++++++++++++++++++++++++++++++++++++++*/
+        //Validar txt length
+        String[] txtlin = txt.split(";");
+        Log.e("TAGNAME", ">>> txtlin :  " + txtlin[0]);
+        //Log.e("TAGNAME", ">>> txtlin :  " + txtlin[1]);
+        //Log.e("TAGNAME", ">>> txtlin :  " + txtlin[2]);
+        /*+++++++++++++++++++++++++++++++++++++++++++++++*/
         int diffA = getInputData().getInt("diffA", 0);
         int intrv = getInputData().getInt("intrv", 0);
         Log.d("TAGNAME", ">>> diffA " + diffA);
         // ------------------------------------------------------------------------------------------
+        Log.e("TAGNAME", ">>> intrv :  " + intrv);
         // ------------------------------------------------------------------------------------------
-        setRecAlamServ("Taimer iniciado", "tit", "txt");
+        setRecAlamServ("taimer rodando", "Taimer Rodando");
         while ( cnt < diffA && trabalha){
             Log.d("TAGNAME", ">>> doWork trabalhando :  " + cnt +" de "+ diffA);
 
             //if (Calendar.getInstance().get(Calendar.SECOND) % 3 == 0) {
             if (Calendar.getInstance().get(Calendar.SECOND) % intrv == 0) {
-                String falTTS = (" "+ Calendar.getInstance().get(Calendar.MINUTE) +" minutos e "+ Calendar.getInstance().get(Calendar.SECOND));
-                setRecAlamServ(falTTS, tit, txt);
-                //setRecAlamServ("TITULO", "tit", "txt");
+                String falTTS = (txtlin[0]+" "+ Calendar.getInstance().get(Calendar.MINUTE) +" e "+ Calendar.getInstance().get(Calendar.SECOND));
+                setRecAlamServ(falTTS, (txtlin[0]+" "+falTTS));
             }
-            if (Calendar.getInstance().get(Calendar.SECOND) % (intrv+3) == 0) {
+            if (Calendar.getInstance().get(Calendar.SECOND) % (intrv+5) == 0) {
                 stopRecAlamServ();
             }
 
@@ -80,7 +86,7 @@ public class WorkManagerRecTimer extends Worker {
         // ------------------------------------------------------------------------------------------
         //falaAlarme("Taimer Finalizado");
         // ------------------------------------------------------------------------------------------
-        setRecAlamServ("Taimer Finalizado", "tit", "txt");
+        setRecAlamServ("Taimer Finalizado", "Taimer Finalizado");
         try{ Thread.sleep(3000); }
         catch (InterruptedException e){
             e.printStackTrace();
@@ -95,10 +101,11 @@ public class WorkManagerRecTimer extends Worker {
         // ------------------------------------------------------------------------------------------
     }
 
-    private void setRecAlamServ(String falTTS, String tit, String txt) {
+    private void setRecAlamServ(String falTTS, String txt) {
         //Intent intentService = new Intent(getApplicationContext(), AlarmService.class);
         Intent intentService = new Intent(getApplicationContext(), FalaTTS.class);
         intentService.putExtra("falTTS", falTTS);
+        intentService.putExtra("txt", txt);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ContextCompat.startForegroundService(getApplicationContext(), intentService);
         } else {

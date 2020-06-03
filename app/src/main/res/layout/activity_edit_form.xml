@@ -214,7 +214,7 @@
                 android:fontFamily="sans-serif-condensed-light"
                 android:inputType="textShortMessage"
                 android:selectAllOnFocus="true"
-                android:text="Alerta em,"
+                android:text="alerta em;6,0;tomar banho;6,10;tomar cafe;6,25;sair pro ponto"
                 android:textAlignment="center"
                 android:textColor="#01579B"
                 android:textSize="14sp" />

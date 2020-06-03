@@ -61,7 +61,7 @@ public class EditForm extends AppCompatActivity {
 
     Calendar nowdate;
 
-    private int AlertTimei;
+    private int AlertTimei = 0;
     private int AlertTimef;
 
     private int Intervalo;
@@ -161,16 +161,18 @@ public class EditForm extends AppCompatActivity {
                         // android:text="11:20|First Step|18:30|Second Step"
                         String ttsfala = Objects.requireNonNull(inptSpeach.getText()).toString();
                         //------------------------------------------------------------------------------------------------
-                        Intervalo = 10;
-                        diffA = 30000; // em Segundos
-                        AlertTimei = 5000; // em ms tempo de espera para começar
+                        //PARA TESTES
+                        //Intervalo = 10;
+                        //diffA = 60000; // em Segundos
+                        //AlertTimei = 5000; // em ms tempo de espera para começar
+                        //------------------------------------------------------------------------------------------------
                         //AlertTimef = 60000; // em ms temo que demora o trabalho = death timer
 
-                        Log.d("TAGNAME", "AlertTimei "+String.valueOf(AlertTimei / 1000));
+                        Log.d("TAGNAME", "AlertTimei = 0 "+String.valueOf(AlertTimei = 0 / 1000));
                         Log.d("TAGNAME", "AlertTimef "+String.valueOf(AlertTimef / 1000));
 
-                        //salvarAlarme("tag1", AlertTimei, "titititi", "fala teste", (AlertTimef-AlertTimei), Intervalo);
-                        salvarAlarme(tag, AlertTimei, "titititi", ttsfala, diffA/1000, Intervalo);
+                        //salvarAlarme("tag1", AlertTimei = 0, "titititi", "fala teste", (AlertTimef-AlertTimei = 0), Intervalo);
+                        salvarAlarme(tag, AlertTimei = 0, ttsfala, diffA/1000, Intervalo);
                         //------------------------------------------------------------------------------------------------
                     }else{
 //                        int diffTime = diffMax-30000;
@@ -223,13 +225,12 @@ public class EditForm extends AppCompatActivity {
         }
     }
 
-    private void salvarAlarme(String tag, int alertTime, String tit, String txt, int diffA, int intrv) {
+    private void salvarAlarme(String tag, int alertTime, String txt, int diffA, int intrv) {
 
         /*============================================================*/
         Intent intentBC = new Intent(this, RecBroadcastReceiver.class);
         intentBC.putExtra("alertTime", alertTime);
         intentBC.putExtra("tag", tag);
-        intentBC.putExtra("tit", tit);
         intentBC.putExtra("txt", txt);
         intentBC.putExtra("diffA", diffA);
         intentBC.putExtra("intrv", intrv);

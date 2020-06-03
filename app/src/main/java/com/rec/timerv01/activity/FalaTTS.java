@@ -34,6 +34,8 @@ public class FalaTTS extends Service {
     private int result;
 
     private String falTTS = "Testando T.T.S. 1, 2, 3";
+    private String tit = "RecTimer";
+    private String txt = "Testando Txt";
 
     private static final String CHANNEL_ID = "MyNotificationChannelID";
 
@@ -60,6 +62,7 @@ public class FalaTTS extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         falTTS = intent.getExtras().getString("falTTS");
+        txt = intent.getExtras().getString("txt");
 
         //alarmHour = intent.getIntExtra("alarmHour", 0);
         //alarmMinute = intent.getIntExtra("alarmMinute", 0);
@@ -81,9 +84,9 @@ public class FalaTTS extends Service {
 
 
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID )
-                    .setContentTitle("My Alarm clock")
+                    .setContentTitle(tit)
                     //.setContentText("Alarm time - " + alarmHour.toString() + " : " + alarmMinute.toString())
-                    .setContentText("OKOKOK")
+                    .setContentText(txt)
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setContentIntent(pendingIntent)
                     .setSound(null)
