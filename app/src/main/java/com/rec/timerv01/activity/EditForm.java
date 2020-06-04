@@ -34,6 +34,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.rec.timerv01.R;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +51,13 @@ public class EditForm extends AppCompatActivity {
     private TextInputEditText inptIvH;
     private TextInputEditText inptIvM;
     private TextInputEditText inptIvS;
+
+    private TextView titTTS;
     private TextInputEditText inptSpeach;
+    private TextView addTTS;
+    private String ttsfala = "";
+    
+
     private Switch switchStatus;
     private FloatingActionButton btnSave;
     private Button btnStop;
@@ -90,7 +97,11 @@ public class EditForm extends AppCompatActivity {
         inptIvM = findViewById(R.id.inptIvM);
         inptIvS = findViewById(R.id.inptIvS);
 
+        titTTS = findViewById(R.id.titTTS);
         inptSpeach = findViewById(R.id.inptSpeach);
+        addTTS = findViewById(R.id.addTTS);
+
+
         switchStatus = findViewById(R.id.switchStatus);
 
         txtTimeRT = findViewById(R.id.txtTimeRT);
@@ -159,7 +170,7 @@ public class EditForm extends AppCompatActivity {
                         //------------------------------------------------------------------------------------------------
                         Intervalo = (vlIvH*60*60*1000)+(vlIvM*60*1000)+(vlIvS);
                         // android:text="11:20|First Step|18:30|Second Step"
-                        String ttsfala = Objects.requireNonNull(inptSpeach.getText()).toString();
+                        //String ttsfala = Objects.requireNonNull(inptSpeach.getText()).toString();
                         //------------------------------------------------------------------------------------------------
                         //PARA TESTES
                         //Intervalo = 10;
@@ -189,6 +200,60 @@ public class EditForm extends AppCompatActivity {
             }
         });
 
+        titTTS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //Toast.makeText(EditForm.this, "okokokok", Toast.LENGTH_SHORT).show();
+                String txtaddTTS = Objects.requireNonNull(inptSpeach.getText()).toString();
+                if(!txtaddTTS.equals("")){
+                    String listaddTTS = Objects.requireNonNull(addTTS.getText()).toString();
+                    String[] arrTTS = listaddTTS.split("|");
+                    //Log.d("AVA", "arrTTS.length "+arrTTS.length);
+
+                    //PRIMEIRO VALOR
+                    if(arrTTS.length <= 1){
+                        addTTS.setText(txtaddTTS);
+                        addTTS.setVisibility(View.VISIBLE);
+                        inptSpeach.setText("");
+                        hideKeyboard(EditForm.this);
+                    }
+                    //SIGUIENTES VALORES
+                    else{
+
+                        //VALIDA VALOR REPETIDO
+                        if( !useList(arrTTS, txtaddTTS) ){
+                            if(txtaddTTS){
+
+                            }
+                            String newtxtTTS = listaddTTS+"\n"+txtaddTTS;
+                            addTTS.setText(newtxtTTS);
+                            inptSpeach.setText("");
+                            hideKeyboard(EditForm.this);
+                        }else{
+                            Toast.makeText(EditForm.this, "O valor tem que ser diferente!", Toast.LENGTH_SHORT).show();
+                        }
+
+
+
+                        //Log.d("AVA", "arrTTS "+arrTTS.toString());
+                    }
+//                    if(listaddTTS.equals("")){
+//                    }else{
+//
+//
+//                        Log.d("AVA", "arrTTS "+arrTTS);
+//                        Log.d("AVA", "arrTTS.length "+arrTTS.length);
+//
+//                        String newtxtTTS = listaddTTS+"|"+txtaddTTS;
+//
+//                        addTTS.setText(newtxtTTS);
+//                        Toast.makeText(EditForm.this, listaddTTS, Toast.LENGTH_SHORT).show();
+//                    }
+                }
+            }
+        });
+
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,8 +264,6 @@ public class EditForm extends AppCompatActivity {
             }
         });
 
-
-
         boxGeral.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,6 +273,11 @@ public class EditForm extends AppCompatActivity {
 
 
     }//FINAL DO ONCREATE
+
+
+    public static boolean useList(String[] arr, String targetValue) {
+        return Arrays.asList(arr).contains(targetValue);
+    }
 
 
     private void ajusteDT() {
