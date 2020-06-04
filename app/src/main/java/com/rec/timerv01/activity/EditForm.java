@@ -205,51 +205,40 @@ public class EditForm extends AppCompatActivity {
             public void onClick(View v) {
 
                 //Toast.makeText(EditForm.this, "okokokok", Toast.LENGTH_SHORT).show();
-                String txtaddTTS = Objects.requireNonNull(inptSpeach.getText()).toString();
-                if(!txtaddTTS.equals("")){
-                    String listaddTTS = Objects.requireNonNull(addTTS.getText()).toString();
-                    String[] arrTTS = listaddTTS.split("|");
-                    //Log.d("AVA", "arrTTS.length "+arrTTS.length);
+                String txtVld = Objects.requireNonNull(inptSpeach.getText()).toString();
+                if(!txtVld.equals("")){
+                    String txtaddTTS = vldTTS(txtVld);
+                    if(!txtaddTTS.equals("ERROR")){
+                        String listaddTTS = Objects.requireNonNull(addTTS.getText()).toString();
+                        String[] arrTTS = listaddTTS.split("\n");
+                        //Log.d("AVA", "arrTTS.length "+arrTTS.length);
 
-                    //PRIMEIRO VALOR
-                    if(arrTTS.length <= 1){
-                        addTTS.setText(txtaddTTS);
-                        addTTS.setVisibility(View.VISIBLE);
-                        inptSpeach.setText("");
-                        hideKeyboard(EditForm.this);
-                    }
-                    //SIGUIENTES VALORES
-                    else{
-
-                        //VALIDA VALOR REPETIDO
-                        if( !useList(arrTTS, txtaddTTS) ){
-                            if(txtaddTTS){
-
-                            }
-                            String newtxtTTS = listaddTTS+"\n"+txtaddTTS;
-                            addTTS.setText(newtxtTTS);
+                        //PRIMEIRO VALOR
+                        if(arrTTS.length <= 1){
+                            addTTS.setText(txtaddTTS);
+                            addTTS.setVisibility(View.VISIBLE);
                             inptSpeach.setText("");
                             hideKeyboard(EditForm.this);
-                        }else{
-                            Toast.makeText(EditForm.this, "O valor tem que ser diferente!", Toast.LENGTH_SHORT).show();
                         }
 
+                        //SIGUIENTES VALORES
+                        else{
 
+                            //VALIDA VALOR REPETIDO
+                            if( !useList(arrTTS, txtaddTTS) ){
 
-                        //Log.d("AVA", "arrTTS "+arrTTS.toString());
+                                String newtxtTTS = listaddTTS+"\n"+txtaddTTS;
+                                addTTS.setText(newtxtTTS);
+                                inptSpeach.setText("");
+                                hideKeyboard(EditForm.this);
+                            }else{
+                                Toast.makeText(EditForm.this, "O valor tem que ser diferente!", Toast.LENGTH_SHORT).show();
+                            }
+                            //Log.d("AVA", "arrTTS "+arrTTS.toString());
+                        }
+                    }else{
+                        Log.e("AVA", "ERROR no Valor ");
                     }
-//                    if(listaddTTS.equals("")){
-//                    }else{
-//
-//
-//                        Log.d("AVA", "arrTTS "+arrTTS);
-//                        Log.d("AVA", "arrTTS.length "+arrTTS.length);
-//
-//                        String newtxtTTS = listaddTTS+"|"+txtaddTTS;
-//
-//                        addTTS.setText(newtxtTTS);
-//                        Toast.makeText(EditForm.this, listaddTTS, Toast.LENGTH_SHORT).show();
-//                    }
                 }
             }
         });
@@ -273,6 +262,19 @@ public class EditForm extends AppCompatActivity {
 
 
     }//FINAL DO ONCREATE
+
+    private String vldTTS(String txtVld) {
+        String[] arrtxtVld = txtVld.split(",");
+        if( (arrtxtVld.length == 3) 
+            && (arrtxtVld[0].matches("-?\\d+(\\.\\d+)?")) && (Integer.parseInt(arrtxtVld[0]) <= 23)
+            && (arrtxtVld[1].matches("-?\\d+(\\.\\d+)?")) && (Integer.parseInt(arrtxtVld[1]) <= 59) ){
+
+                return arrtxtVld[0];
+
+        }else{
+            return "ERROR";
+        }
+    }
 
 
     public static boolean useList(String[] arr, String targetValue) {
